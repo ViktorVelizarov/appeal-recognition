@@ -17,6 +17,11 @@ if __name__ == "__main__":
     from ultralytics import YOLO
 
 
+    def load_trained_model(model_path='trained_YOLO8.pt'):
+        model = YOLO(model_path)
+        print(f"Model loaded from {model_path}")
+        return model
+
     def convert(size,x,y,w,h):
         box = np.zeros(4)
         dw = 1./size[0]
@@ -48,13 +53,11 @@ if __name__ == "__main__":
                 plt.axis('off')
                 plt.imshow(img)
 
-    plt.figure(figsize=(20,12))
-    ls = os.listdir(images_path)
-    c = 1
-    for i in random.sample(ls, 10):
-        img = plt.imread(images_path+i)
-        img = img.copy()
-        i = i.rstrip('.jpg') + '.txt'
-        plt.subplot(2,5, c)
-        plot_annotations(img, i)
-        c+=1
+        model = YOLO("yolov8m.pt")
+        model.train(data='data.yaml', epochs=5)
+        # Save the trained model
+        save_path='trained_YOLO8.pt'
+        model.save(save_path)
+        print(f"Model saved to {save_path}")
+
+
