@@ -1,14 +1,8 @@
 if __name__ == "__main__":
     import numpy as np
     import matplotlib.pyplot as plt
-    import random
     import os
     import cv2  
-    import shutil
-    import tqdm
-    import glob
-
-    import torch
 
     images_path = 'colorful_fashion_dataset_for_object_detection/JPEGImages/'
     annotations_path  = 'colorful_fashion_dataset_for_object_detection/Annotations_txt/'
@@ -53,11 +47,44 @@ if __name__ == "__main__":
                 plt.axis('off')
                 plt.imshow(img)
 
+    def test_single_image(model, image_path, conf_threshold=0.4):
+        # Run prediction
+        results = model.predict(source=image_path, conf=conf_threshold, save=True, line_width=2)
+        
+        # Load and display the image with predictions
+        plt.figure(figsize=(12, 10))
+        
+        # Original image
+        img = plt.imread(image_path)
+        plt.subplot(1, 2, 1)
+        plt.title("Original Image")
+        plt.axis('off')
+        plt.imshow(img)
+        
+        # Image with predictions
+        # The results[0].plot() method returns the image with detections drawn on it
+        result_img = results[0].plot()
+        plt.subplot(1, 2, 2)
+        plt.title("Detected Objects")
+        plt.axis('off')
+        plt.imshow(cv2.cvtColor(result_img, cv2.COLOR_BGR2RGB))
+        
+        plt.tight_layout()
+        plt.show()
+
+    # Check if a trained model exists
+    if not os.path.exists('trained_YOLO8.pt'):
+        # If no saved model, train the model
         model = YOLO("yolov8m.pt")
         model.train(data='data.yaml', epochs=5)
         # Save the trained model
         save_path='trained_YOLO8.pt'
         model.save(save_path)
         print(f"Model saved to {save_path}")
+    else:
+        # Load the existing trained model
+        model = load_trained_model()
 
-
+        # Test on a specific image
+        test_image_path = 'myimage.jpg'  
+        test_single_image(model, test_image_path)

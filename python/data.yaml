@@ -1,0 +1,9 @@
+
+train: C:\Users\vikto\Documents\projects\S4\solo project\appeal-recognition\train
+val: C:\Users\vikto\Documents\projects\S4\solo project\appeal-recognition\test
+
+# number of classes
+nc: 10
+
+# class names
+names: ['sunglass','hat','jacket','shirt','pants','shorts','skirt','dress','bag','shoe']
