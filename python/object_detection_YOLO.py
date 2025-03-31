@@ -17,15 +17,44 @@ if __name__ == "__main__":
     from ultralytics import YOLO
 
 
-    # load pre-trained model
-    detection_model = YOLO("yolov8m.pt")
+    def convert(size,x,y,w,h):
+        box = np.zeros(4)
+        dw = 1./size[0]
+        dh = 1./size[1]
+        x = x/dw
+        w = w/dw
+        y = y/dh
+        h = h/dh
+        box[0] = x-(w/2.0)
+        box[1] = x+(w/2.0)
+        box[2] = y-(h/2.0)
+        box[3] = y+(h/2.0)
 
-    # choose random image
-    img = random.choice(images_path)
+        return (box)
 
-    i=detection_model.predict(source='https://i.stack.imgur.com/GRdCC.jpg', conf=0.5, save=True, line_thickness=2, hide_labels=False)
+    def plot_annotations(img, filename):
+        with open(annotations_path+filename, 'r') as f:
+            for line in f:
+                value = line.split()
+                cls = int(value[0])
+                x = float(value[1])
+                y = float(value[2])
+                w = float(value[3])
+                h = float(value[4])
+                
+                img_h, img_w = img.shape[:2]
+                bb = convert((img_w, img_h), x,y,w,h)
+                cv2.rectangle(img, (int(round(bb[0])),int(round(bb[2]))),(int(round(bb[1])),int(round(bb[3]))),(255,0,0),2)
+                plt.axis('off')
+                plt.imshow(img)
 
-    im = plt.imread('https://i.stack.imgur.com/GRdCC.jpg')
-    plt.figure(figsize=(20,10))
-    plt.axis('off')
-    plt.imshow(im)
+    plt.figure(figsize=(20,12))
+    ls = os.listdir(images_path)
+    c = 1
+    for i in random.sample(ls, 10):
+        img = plt.imread(images_path+i)
+        img = img.copy()
+        i = i.rstrip('.jpg') + '.txt'
+        plt.subplot(2,5, c)
+        plot_annotations(img, i)
+        c+=1
