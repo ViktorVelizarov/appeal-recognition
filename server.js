@@ -45,13 +45,129 @@ const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
 // Create the results directory if it doesn't exist
-const resultsDir = path.join(__dirname, 'python/runs/detect/predict');
-if (!fs.existsSync(resultsDir)) {
-    fs.mkdirSync(resultsDir, { recursive: true });
+const runsDir = path.join(__dirname, 'python/runs');
+if (!fs.existsSync(runsDir)) {
+    fs.mkdirSync(runsDir, { recursive: true });
 }
 
-// Serve static files from the runs/detect/predict directory
-app.use('/results', express.static(path.join(__dirname, 'python/runs/detect/predict')));
+// Serve static files from the runs directory
+app.use('/runs', express.static(runsDir, {
+    setHeaders: (res, path) => {
+        res.set('Content-Type', 'image/jpeg');
+    }
+}));
+
+// Add a route to check if images exist
+app.get('/check-image/:runId/:type/:filename', (req, res) => {
+    const { runId, type, filename } = req.params;
+    const filePath = type === 'cropped' 
+        ? path.join(runsDir, runId, 'cropped', filename)
+        : path.join(runsDir, runId, filename);
+    
+    console.log(`Checking file: ${filePath}`);
+    console.log(`File exists: ${fs.existsSync(filePath)}`);
+    
+    res.json({
+        exists: fs.existsSync(filePath),
+        path: filePath
+    });
+});
+
+// Add a debug route to list files in a run directory
+app.get('/debug/run/:runId', (req, res) => {
+    const { runId } = req.params;
+    const runDir = path.join(runsDir, runId);
+    
+    if (!fs.existsSync(runDir)) {
+        return res.status(404).json({ error: `Run directory not found: ${runDir}` });
+    }
+    
+    const files = fs.readdirSync(runDir);
+    const result = {
+        runDir,
+        files,
+        croppedDir: null,
+        croppedFiles: []
+    };
+    
+    const croppedDir = path.join(runDir, 'cropped');
+    if (fs.existsSync(croppedDir)) {
+        result.croppedDir = croppedDir;
+        result.croppedFiles = fs.readdirSync(croppedDir);
+    }
+    
+    res.json(result);
+});
+
+// Add a route to directly serve cropped images
+app.get('/runs/:runId/cropped/:filename', (req, res) => {
+    const { runId, filename } = req.params;
+    const filePath = path.join(runsDir, runId, 'cropped', filename);
+    
+    console.log(`Serving cropped image: ${filePath}`);
+    console.log(`File exists: ${fs.existsSync(filePath)}`);
+    
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send(`Cropped image not found: ${filePath}`);
+    }
+});
+
+// Add a route to directly serve result images
+app.get('/runs/:runId/:filename', (req, res) => {
+    const { runId, filename } = req.params;
+    const filePath = path.join(runsDir, runId, filename);
+    
+    console.log(`Serving result image: ${filePath}`);
+    console.log(`File exists: ${fs.existsSync(filePath)}`);
+    
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send(`Result image not found: ${filePath}`);
+    }
+});
+
+// Add a debug route to check the directory structure
+app.get('/debug/directory', (req, res) => {
+    const result = {
+        runsDir,
+        exists: fs.existsSync(runsDir),
+        contents: []
+    };
+    
+    if (fs.existsSync(runsDir)) {
+        result.contents = fs.readdirSync(runsDir);
+        
+        // Check each run directory
+        result.runs = result.contents.map(runId => {
+            const runDir = path.join(runsDir, runId);
+            const runInfo = {
+                runId,
+                path: runDir,
+                exists: fs.existsSync(runDir),
+                files: [],
+                croppedDir: null,
+                croppedFiles: []
+            };
+            
+            if (fs.existsSync(runDir)) {
+                runInfo.files = fs.readdirSync(runDir);
+                
+                const croppedDir = path.join(runDir, 'cropped');
+                if (fs.existsSync(croppedDir)) {
+                    runInfo.croppedDir = croppedDir;
+                    runInfo.croppedFiles = fs.readdirSync(croppedDir);
+                }
+            }
+            
+            return runInfo;
+        });
+    }
+    
+    res.json(result);
+});
 
 app.get("/", (req, res) => {
     res.send("Server is running");
@@ -143,12 +259,38 @@ app.post("/upload", upload.single('image'), async (req, res) => {
                 
                 console.log('Parsed results:', jsonResult);
                 
+                // Check if result image exists
+                const resultImagePath = jsonResult.result_image_path;
+                console.log('Result image path:', resultImagePath);
+                console.log('Result image exists:', fs.existsSync(resultImagePath));
+                
                 // Clean up the uploaded file
                 fs.unlinkSync(req.file.path);
                 
+                // Extract the run ID from the run directory path
+                const runId = path.basename(jsonResult.run_directory);
+                
+                // Construct the correct URLs for the frontend
+                const resultImageUrl = `/runs/${runId}/detected_${path.basename(req.file.originalname)}`;
+                
+                // Log the constructed URL for debugging
+                console.log('Result image URL:', resultImageUrl);
+                
+                // Check if cropped images exist
+                if (jsonResult.detections && jsonResult.detections.length > 0) {
+                    console.log('Checking cropped images:');
+                    jsonResult.detections.forEach(detection => {
+                        const croppedPath = path.join(runsDir, runId, 'cropped', detection.cropped_image);
+                        console.log(`Cropped image path: ${croppedPath}`);
+                        console.log(`Cropped image exists: ${fs.existsSync(croppedPath)}`);
+                    });
+                }
+                
+                // Return the run ID separately to make it easier for the frontend
                 res.json({
                     ...jsonResult,
-                    result_image_url: `/results/${path.basename(jsonResult.result_image_path)}`
+                    result_image_url: resultImageUrl,
+                    run_id: runId
                 });
             } catch (e) {
                 console.error('Failed to parse results:', e);

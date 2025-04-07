@@ -7,6 +7,8 @@ import json
 from ultralytics import YOLO
 import io
 import contextlib
+import datetime
+import shutil
 
 # Redirect stdout to stderr for YOLO output
 class StderrRedirector:
@@ -52,26 +54,76 @@ def process_image(model, image_path, conf_threshold=0.4):
     
     # Get detection results
     detections = []
-    for r in results:
+    original_image = cv2.imread(image_path)
+    
+    # Get the script directory for absolute paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Create a timestamp-based directory for this prediction
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_dir = os.path.join(script_dir, 'runs', timestamp)
+    os.makedirs(run_dir, exist_ok=True)
+    
+    # Save the original image
+    original_filename = os.path.basename(image_path)
+    original_path = os.path.join(run_dir, 'original_' + original_filename)
+    cv2.imwrite(original_path, original_image)
+    
+    # Create directory for cropped images
+    cropped_dir = os.path.join(run_dir, 'cropped')
+    os.makedirs(cropped_dir, exist_ok=True)
+    
+    # Find the YOLO detection result image
+    yolo_result_dir = os.path.join(script_dir, 'runs', 'detect', 'predict')
+    yolo_result_path = os.path.join(yolo_result_dir, original_filename)
+    
+    # Copy the YOLO detection result to our new directory
+    detected_path = os.path.join(run_dir, 'detected_' + original_filename)
+    if os.path.exists(yolo_result_path):
+        shutil.copy2(yolo_result_path, detected_path)
+        sys.stderr.write(f"Copied detection image from {yolo_result_path} to {detected_path}\n")
+    else:
+        # If YOLO didn't save the image, we'll create a copy of the original
+        cv2.imwrite(detected_path, original_image)
+        sys.stderr.write(f"Warning: YOLO detection image not found at {yolo_result_path}\n")
+    
+    # Draw bounding boxes on the detection image
+    detection_image = cv2.imread(detected_path)
+    for i, r in enumerate(results):
         boxes = r.boxes
-        for box in boxes:
-            x1, y1, x2, y2 = box.xyxy[0].tolist()
+        for j, box in enumerate(boxes):
+            x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
             confidence = float(box.conf[0])
             class_id = int(box.cls[0])
             class_name = r.names[class_id]
             
+            # Draw bounding box
+            cv2.rectangle(detection_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(detection_image, f"{class_name} {confidence:.2f}", (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            
+            # Crop the detected object
+            cropped_image = original_image[y1:y2, x1:x2]
+            cropped_filename = f'cropped_{i}_{j}_{class_name}.jpg'
+            cropped_path = os.path.join(cropped_dir, cropped_filename)
+            cv2.imwrite(cropped_path, cropped_image)
+            sys.stderr.write(f"Saved cropped image to {cropped_path}\n")
+            
             detections.append({
                 'class': class_name,
                 'confidence': confidence,
-                'bbox': [x1, y1, x2, y2]
+                'bbox': [x1, y1, x2, y2],
+                'cropped_image': cropped_filename
             })
     
-    # Save the result image
-    result_image_path = os.path.join('runs/detect/predict', os.path.basename(image_path))
+    # Save the detection image with bounding boxes
+    cv2.imwrite(detected_path, detection_image)
     
     return {
         'detections': detections,
-        'result_image_path': result_image_path
+        'result_image_path': detected_path,
+        'original_image_path': original_path,
+        'run_directory': run_dir
     }
 
 def main():
