@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import './ImageUpload.css';
 
 const ImageUpload = () => {
@@ -7,6 +8,7 @@ const ImageUpload = () => {
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { user } = useAuth();
 
     const handleImageSelect = (event) => {
         const file = event.target.files[0];
@@ -31,8 +33,12 @@ const ImageUpload = () => {
         formData.append('image', selectedImage);
 
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:5000/upload', {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData,
             });
 
