@@ -5,7 +5,14 @@ const path = require("path");
 const { spawn } = require("child_process");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require('uuid');
 require("dotenv").config();
+
+// Import models
+const DetectionRun = require('./models/DetectionRun');
+
+// Import services
+const s3Service = require('./services/s3Service');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,7 +42,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.use(cors());
+// Configure CORS
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json()); // Allows JSON request body
 
 // Import routes
@@ -173,19 +187,37 @@ app.get("/", (req, res) => {
     res.send("Server is running");
 });
 
-app.post("/upload", upload.single('image'), async (req, res) => {
+// Add auth middleware to routes that need authentication
+app.post("/upload", auth, upload.single('image'), async (req, res) => {
     try {
         if (!req.file) {
             console.error('No file uploaded');
             return res.status(400).json({ error: 'No image file uploaded' });
         }
 
+        const userId = req.user._id;
         console.log('File uploaded successfully:', req.file.path);
 
+        // Generate a unique run ID
+        const runId = uuidv4();
+        
+        // Create a new detection run record
+        const detectionRun = new DetectionRun({
+            userId,
+            timestamp: new Date(),
+            status: 'processing'
+        });
+        
+        // Save the detection run to get its ID
+        await detectionRun.save();
+        
         // Check if Python script exists
         const pythonScriptPath = path.join(__dirname, 'python/object_detection_YOLO.py');
         if (!fs.existsSync(pythonScriptPath)) {
             console.error('Python script not found at:', pythonScriptPath);
+            detectionRun.status = 'failed';
+            detectionRun.error = 'Python script not found';
+            await detectionRun.save();
             return res.status(500).json({ error: 'Python script not found' });
         }
 
@@ -193,6 +225,9 @@ app.post("/upload", upload.single('image'), async (req, res) => {
         const modelPath = path.join(__dirname, 'python/trained_YOLO8.pt');
         if (!fs.existsSync(modelPath)) {
             console.error('Model file not found at:', modelPath);
+            detectionRun.status = 'failed';
+            detectionRun.error = 'Model file not found';
+            await detectionRun.save();
             return res.status(500).json({ error: 'Model file not found' });
         }
 
@@ -200,6 +235,9 @@ app.post("/upload", upload.single('image'), async (req, res) => {
         const dataYamlPath = path.join(__dirname, 'python/data.yaml');
         if (!fs.existsSync(dataYamlPath)) {
             console.error('data.yaml not found at:', dataYamlPath);
+            detectionRun.status = 'failed';
+            detectionRun.error = 'data.yaml not found';
+            await detectionRun.save();
             return res.status(500).json({ error: 'data.yaml not found' });
         }
 
@@ -235,9 +273,12 @@ app.post("/upload", upload.single('image'), async (req, res) => {
             }
         });
 
-        pythonProcess.on('close', (code) => {
+        pythonProcess.on('close', async (code) => {
             console.log('Python process exited with code:', code);
             if (code !== 0) {
+                detectionRun.status = 'failed';
+                detectionRun.error = `Python script failed: ${error}`;
+                await detectionRun.save();
                 return res.status(500).json({ error: `Python script failed: ${error}` });
             }
 
@@ -264,41 +305,116 @@ app.post("/upload", upload.single('image'), async (req, res) => {
                 console.log('Result image path:', resultImagePath);
                 console.log('Result image exists:', fs.existsSync(resultImagePath));
                 
-                // Clean up the uploaded file
-                fs.unlinkSync(req.file.path);
+                // Upload original image to S3
+                console.log('Uploading original image to S3...');
+                const originalImageKey = s3Service.generateS3Key(userId, runId, req.file.originalname, 'original');
+                console.log('Original image S3 key:', originalImageKey);
+                const originalImageUrl = await s3Service.uploadFile(req.file.path, originalImageKey);
+                console.log('Original image uploaded to S3:', originalImageUrl);
                 
-                // Extract the run ID from the run directory path
-                const runId = path.basename(jsonResult.run_directory);
+                // Upload detected image to S3
+                console.log('Uploading detected image to S3...');
+                const detectedImageKey = s3Service.generateS3Key(userId, runId, req.file.originalname, 'detected');
+                console.log('Detected image S3 key:', detectedImageKey);
+                const detectedImageUrl = await s3Service.uploadFile(resultImagePath, detectedImageKey);
+                console.log('Detected image uploaded to S3:', detectedImageUrl);
                 
-                // Construct the correct URLs for the frontend
-                const resultImageUrl = `/runs/${runId}/detected_${path.basename(req.file.originalname)}`;
-                
-                // Log the constructed URL for debugging
-                console.log('Result image URL:', resultImageUrl);
-                
-                // Check if cropped images exist
-                if (jsonResult.detections && jsonResult.detections.length > 0) {
-                    console.log('Checking cropped images:');
-                    jsonResult.detections.forEach(detection => {
-                        const croppedPath = path.join(runsDir, runId, 'cropped', detection.cropped_image);
-                        console.log(`Cropped image path: ${croppedPath}`);
-                        console.log(`Cropped image exists: ${fs.existsSync(croppedPath)}`);
-                    });
+                // Upload cropped images to S3
+                console.log('Uploading cropped images to S3...');
+                const croppedImages = [];
+                for (const detection of jsonResult.detections) {
+                    const croppedImagePath = path.join(path.dirname(resultImagePath), 'cropped', detection.cropped_image);
+                    console.log('Checking cropped image path:', croppedImagePath);
+                    if (fs.existsSync(croppedImagePath)) {
+                        const croppedImageKey = s3Service.generateS3Key(userId, runId, detection.cropped_image, 'cropped');
+                        console.log('Cropped image S3 key:', croppedImageKey);
+                        const croppedImageUrl = await s3Service.uploadFile(croppedImagePath, croppedImageKey);
+                        console.log('Cropped image uploaded to S3:', croppedImageUrl);
+                        
+                        croppedImages.push({
+                            class: detection.class,
+                            confidence: detection.confidence,
+                            bbox: detection.bbox,
+                            imageUrl: croppedImageUrl
+                        });
+                    } else {
+                        console.log('Cropped image not found:', croppedImagePath);
+                    }
                 }
                 
-                // Return the run ID separately to make it easier for the frontend
-                res.json({
-                    ...jsonResult,
-                    result_image_url: resultImageUrl,
-                    run_id: runId
-                });
+                // Update detection run with image URLs
+                detectionRun.originalImageUrl = originalImageUrl;
+                detectionRun.detectedImageUrl = detectedImageUrl;
+                detectionRun.croppedImages = croppedImages;
+                detectionRun.status = 'completed';
+                await detectionRun.save();
+                
+                // Clean up local files
+                fs.unlinkSync(req.file.path);
+                if (fs.existsSync(resultImagePath)) {
+                    fs.unlinkSync(resultImagePath);
+                }
+                
+                // Clean up cropped images
+                const croppedDir = path.join(path.dirname(resultImagePath), 'cropped');
+                if (fs.existsSync(croppedDir)) {
+                    const croppedFiles = fs.readdirSync(croppedDir);
+                    for (const file of croppedFiles) {
+                        fs.unlinkSync(path.join(croppedDir, file));
+                    }
+                    fs.rmdirSync(croppedDir);
+                }
+                
+                // Return the detection run ID and image URLs
+                const responseData = {
+                    runId: detectionRun._id,
+                    originalImageUrl: originalImageUrl,
+                    detectedImageUrl: detectedImageUrl,
+                    croppedImages: croppedImages
+                };
+                
+                console.log('Sending response:', responseData);
+                console.log('Response data type:', typeof responseData);
+                console.log('Response data keys:', Object.keys(responseData));
+                
+                res.json(responseData);
             } catch (e) {
-                console.error('Failed to parse results:', e);
-                res.status(500).json({ error: 'Failed to parse Python script results' });
+                console.error('Failed to process results:', e);
+                detectionRun.status = 'failed';
+                detectionRun.error = `Failed to process results: ${e.message}`;
+                await detectionRun.save();
+                res.status(500).json({ error: 'Failed to process results' });
             }
         });
     } catch (error) {
         console.error('Server error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Add a route to get a user's detection runs
+app.get("/api/detection-runs", auth, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const runs = await DetectionRun.find({ userId }).sort({ timestamp: -1 });
+        res.json(runs);
+    } catch (error) {
+        console.error('Error fetching detection runs:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Add a route to get a specific detection run
+app.get("/api/detection-runs/:runId", auth, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const run = await DetectionRun.findOne({ _id: req.params.runId, userId });
+        if (!run) {
+            return res.status(404).json({ error: 'Detection run not found' });
+        }
+        res.json(run);
+    } catch (error) {
+        console.error('Error fetching detection run:', error);
         res.status(500).json({ error: error.message });
     }
 });

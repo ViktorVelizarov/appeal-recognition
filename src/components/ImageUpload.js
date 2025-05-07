@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api/axios';
+import axios from 'axios';
 import { Box, Button, CircularProgress, Typography, Paper, Grid, Card, CardContent, CardMedia } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
@@ -14,6 +14,22 @@ const ImageUpload = () => {
         // Fetch user's detection runs on component mount
         fetchDetectionRuns();
     }, []);
+
+    const fetchDetectionRuns = async () => {
+        try {
+            const response = await axios.get('/api/detection-runs');
+            if (response.data) {
+                setDetectionRuns(response.data);
+            } else {
+                console.error('No data received from detection runs endpoint');
+                setDetectionRuns([]);
+            }
+        } catch (error) {
+            console.error('Error fetching detection runs:', error);
+            setError('Failed to fetch detection history');
+            setDetectionRuns([]);
+        }
+    };
 
     const handleFileSelect = (event) => {
         const file = event.target.files[0];
@@ -36,10 +52,10 @@ const ImageUpload = () => {
         formData.append('image', selectedFile);
 
         try {
-            const response = await api.post('/upload', formData, {
+            const response = await axios.post('/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                }
+                },
             });
 
             console.log('Full response:', response);
@@ -75,35 +91,9 @@ const ImageUpload = () => {
         } catch (error) {
             console.error('Upload error:', error);
             console.error('Error response:', error.response);
-            if (error.response?.status === 401) {
-                setError('Please log in to upload images');
-            } else {
-                setError(error.response?.data?.error || 'Failed to upload image');
-            }
+            setError(error.response?.data?.error || 'Failed to upload image');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const fetchDetectionRuns = async () => {
-        try {
-            const response = await api.get('/api/detection-runs');
-            console.log('Detection runs response:', response.data);
-            
-            if (response.data && Array.isArray(response.data)) {
-                setDetectionRuns(response.data);
-            } else {
-                console.error('Invalid detection runs data:', response.data);
-                setDetectionRuns([]);
-            }
-        } catch (error) {
-            console.error('Error fetching detection runs:', error);
-            if (error.response?.status === 401) {
-                setError('Please log in to view detection history');
-            } else {
-                setError('Failed to fetch detection history');
-            }
-            setDetectionRuns([]);
         }
     };
 
