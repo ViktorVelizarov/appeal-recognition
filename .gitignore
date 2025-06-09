@@ -2,3 +2,5 @@
 python/venv/
 /runs
 .env
+
+/credentials

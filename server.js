@@ -13,6 +13,10 @@ const DetectionRun = require('./models/DetectionRun');
 
 // Import services
 const s3Service = require('./services/s3Service');
+const shoppingService = require('./services/shoppingService');
+
+// Import middleware
+const auth = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -415,6 +419,47 @@ app.get("/api/detection-runs/:runId", auth, async (req, res) => {
         res.json(run);
     } catch (error) {
         console.error('Error fetching detection run:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Add a route to search for similar items using the detected image
+app.get("/api/similar-items/:runId/:filename", auth, async (req, res) => {
+    try {
+        const { runId, filename } = req.params;
+        
+        // Check if filename is already a full URL (from S3)
+        if (filename.startsWith('http')) {
+            // Use the URL directly
+            const results = await shoppingService.searchSimilarItemsWeb(filename);
+            return res.json(results);
+        }
+        
+        // Otherwise get the detection run to find the S3 image URL
+        const run = await DetectionRun.findById(runId);
+        if (!run) {
+            return res.status(404).json({ error: 'Detection run not found' });
+        }
+        
+        // Find the specific cropped image
+        const croppedImage = run.croppedImages.find(img => 
+            img.imageUrl.includes(filename) || img.originalFilename === filename
+        );
+        
+        if (!croppedImage) {
+            return res.status(404).json({ error: 'Cropped image not found' });
+        }
+        
+        // Use the S3 URL directly for web search
+        try {
+            const results = await shoppingService.searchSimilarItemsWeb(croppedImage.imageUrl);
+            return res.json(results);
+        } catch (error) {
+            console.error('Web search failed:', error);
+            res.status(500).json({ error: 'Failed to search for similar items' });
+        }
+    } catch (error) {
+        console.error('Error searching for similar items:', error);
         res.status(500).json({ error: error.message });
     }
 });

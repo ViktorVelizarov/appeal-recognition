@@ -1,6 +1,7 @@
 
 train: C:\Users\vikto\Documents\projects\S4\solo project\appeal-recognition\train
-val: C:\Users\vikto\Documents\projects\S4\solo project\appeal-recognition\test
+val: C:\Users\vikto\Documents\projects\S4\solo project\appeal-recognition\python\test
+
 
 # number of classes
 nc: 10
