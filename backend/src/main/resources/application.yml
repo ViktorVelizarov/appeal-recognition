@@ -1,0 +1,30 @@
+server:
+  port: ${PORT:5000}
+
+spring:
+  mongodb:
+    uri: ${MONGODB_URI:mongodb://localhost:27017/appeal-recognition}
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-days: 7
+  cors:
+    allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:3000}
+  python:
+    dir: ${PYTHON_DIR}
+    executable: ${PYTHON_EXECUTABLE}
+  aws:
+    access-key-id: ${AWS_ACCESS_KEY_ID}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+    region: ${AWS_REGION:us-east-1}
+    bucket-name: ${AWS_BUCKET_NAME}
+  google:
+    api-key: ${GOOGLE_API_KEY:}
+    search-engine-id: ${GOOGLE_SEARCH_ENGINE_ID:}
+  serpapi:
+    api-key: ${SERPAPI_API_KEY:}

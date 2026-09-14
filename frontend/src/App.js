@@ -1,52 +1,40 @@
-import React, { useState } from 'react';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import ImageUpload from './components/ImageUpload';
-import Login from './components/Login';
-import Register from './components/Register';
-import './App.css';
-
-const AppContent = () => {
-  const { user, logout } = useAuth();
-  const [showLogin, setShowLogin] = useState(true);
-
-  if (!user) {
-    return (
-      <div className="App">
-        <div className="auth-toggle">
-          <button 
-            className={showLogin ? 'active' : ''} 
-            onClick={() => setShowLogin(true)}
-          >
-            Login
-          </button>
-          <button 
-            className={!showLogin ? 'active' : ''} 
-            onClick={() => setShowLogin(false)}
-          >
-            Register
-          </button>
-        </div>
-        {showLogin ? <Login /> : <Register />}
-      </div>
-    );
-  }
-
-  return (
-    <div className="App">
-      <div className="header">
-        <h1>Welcome, {user.name}!</h1>
-        <button onClick={logout} className="logout-button">Logout</button>
-      </div>
-      <ImageUpload />
-    </div>
-  );
-};
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeModeProvider } from './context/ThemeModeContext';
+import ProtectedRoute from './components/layout/ProtectedRoute';
+import PublicOnlyRoute from './components/layout/PublicOnlyRoute';
+import AppShell from './components/layout/AppShell';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import DashboardPage from './pages/DashboardPage';
+import HistoryPage from './pages/HistoryPage';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeModeProvider>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <AuthProvider>
+          <Routes>
+            <Route element={<PublicOnlyRoute />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
+
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AppShell />}>
+                <Route path="/app" element={<DashboardPage />} />
+                <Route path="/history" element={<HistoryPage />} />
+              </Route>
+            </Route>
+
+            <Route path="*" element={<Navigate to="/app" replace />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeModeProvider>
   );
 }
 

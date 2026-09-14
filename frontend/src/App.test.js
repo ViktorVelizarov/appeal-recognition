@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('shows the marketing home page to an unauthenticated visitor', async () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const heading = await screen.findByRole('heading', { name: /tag it/i });
+  expect(heading).toBeInTheDocument();
 });

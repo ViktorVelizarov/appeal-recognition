@@ -1,88 +1,59 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import api, { onUnauthorized } from '../api/axios';
 
 const AuthContext = createContext(null);
+
+const extractErrorMessage = (error, fallback) =>
+  error.response?.data?.error || error.message || fallback;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on mount
+    onUnauthorized(() => setUser(null));
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      fetch('http://localhost:5000/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) {
-          setUser(data.user);
-        }
-      })
-      .catch(err => {
-        console.error('Auth check failed:', err);
-        localStorage.removeItem('token');
-      })
-      .finally(() => setLoading(false));
-    } else {
+    if (!token) {
       setLoading(false);
+      return;
+    }
+
+    api
+      .get('/api/auth/me')
+      .then((res) => setUser(res.data.user))
+      .catch(() => localStorage.removeItem('token'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const login = useCallback(async (email, password) => {
+    try {
+      const { data } = await api.post('/api/auth/login', { email, password });
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+      return data;
+    } catch (error) {
+      throw new Error(extractErrorMessage(error, 'Login failed'));
     }
   }, []);
 
-  const login = async (email, password) => {
+  const register = useCallback(async (name, email, password) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
-      }
-
+      const { data } = await api.post('/api/auth/register', { name, email, password });
       localStorage.setItem('token', data.token);
       setUser(data.user);
       return data;
     } catch (error) {
-      throw error;
+      throw new Error(extractErrorMessage(error, 'Registration failed'));
     }
-  };
+  }, []);
 
-  const register = async (name, email, password) => {
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, password })
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
-      }
-
-      localStorage.setItem('token', data.token);
-      setUser(data.user);
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     setUser(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, loading }}>
@@ -97,4 +68,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+};
