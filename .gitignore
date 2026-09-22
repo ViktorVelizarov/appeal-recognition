@@ -1,4 +1,5 @@
 /node_modules
+frontend/build
 python/venv/
 /runs
 backend/runs/

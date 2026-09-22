@@ -34,35 +34,88 @@ const Register = () => {
   };
 
   return (
-    <main>
-      <h1>Register</h1>
-      {error && <p role="alert">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <p>
-          <label>
-            Name <input value={name} onChange={(e) => setName(e.target.value)} required />
-          </label>
-        </p>
-        <p>
-          <label>
-            Email <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </label>
-        </p>
-        <p>
-          <label>
-            Password{' '}
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </label>{' '}
-          (at least {MIN_PASSWORD_LENGTH} characters)
-        </p>
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Creating account...' : 'Create account'}
-        </button>
-      </form>
-      <p>
-        Already registered? <Link to="/login">Log in</Link>
-      </p>
-    </main>
+    <>
+      <header className="auth-top">
+        <Link className="logo" to="/" aria-label="StyleStealer home">
+          <span>
+            Style
+            <br />
+            Stealer
+          </span>
+        </Link>
+        <Link className="auth-top-link" to="/login">
+          Already have an account? Sign in
+        </Link>
+      </header>
+
+      <main className="auth-main">
+        <form className="auth-card" onSubmit={handleSubmit}>
+          <div>
+            <h1 className="mega">
+              Create your
+              <br />
+              account
+              <b>.</b>
+            </h1>
+            <p className="auth-sub">Sign up to get three free scans. No card required.</p>
+          </div>
+
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+
+          <div className="auth-fields">
+            <div className="field">
+              <label htmlFor="register-name">Name</label>
+              <input
+                id="register-name"
+                type="text"
+                placeholder="Jane Appleseed"
+                autoComplete="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="register-email">Email</label>
+              <input
+                id="register-email"
+                type="email"
+                placeholder="you@email.com"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="register-password">Password</label>
+              <input
+                id="register-password"
+                type="password"
+                placeholder="At least 6 characters"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span className="field-hint">At least {MIN_PASSWORD_LENGTH} characters</span>
+            </div>
+          </div>
+
+          <button type="submit" className="btn auth-cta" disabled={submitting}>
+            {submitting ? 'Creating account…' : 'Create account'} <span aria-hidden="true">&#8599;</span>
+          </button>
+
+          <p className="auth-alt">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
+        </form>
+      </main>
+    </>
   );
 };
 

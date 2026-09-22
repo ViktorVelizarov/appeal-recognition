@@ -28,39 +28,58 @@ const HistoryPage = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Detection history</h1>
+    <div className="app-wrap">
+      <div className="app-head">
+        <h1 className="mega">
+          History
+          <b>.</b>
+        </h1>
+        <p className="auth-sub">Every photo you have scanned, with its detected garments and matches.</p>
+      </div>
 
-      {error && <p role="alert">{error}</p>}
-      {loading && <p>Loading...</p>}
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
+      {loading && <p className="mono">Loading…</p>}
 
       {!loading && runs.length === 0 && (
-        <p>
-          No detections yet. <Link to="/app">Upload a photo</Link>
+        <p className="empty">
+          No scans yet. <Link to="/app">Upload a photo</Link>
         </p>
       )}
 
-      <ul>
-        {runs.map((run) => (
-          <li key={run._id}>
-            {new Date(run.timestamp).toLocaleString()} - {run.status}
-            {run.status === 'completed' && ` - ${run.croppedImages?.length || 0} items`}
-            {run.error && ` - ${run.error}`}{' '}
-            {run.status === 'completed' && (
-              <button type="button" onClick={() => setSelectedRun(run)}>
-                View
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+      {runs.length > 0 && (
+        <ul className="runs">
+          {runs.map((run) => (
+            <li className="run" key={run._id}>
+              <div className="run-meta">
+                <span className={`run-status run-status--${run.status}`}>{run.status}</span>
+                <span className="mono">
+                  {new Date(run.timestamp).toLocaleString()}
+                  {run.status === 'completed' && ` · ${run.croppedImages?.length || 0} items`}
+                  {run.error && ` · ${run.error}`}
+                </span>
+              </div>
+              {run.status === 'completed' && (
+                <button type="button" className="btn btn--sm" onClick={() => setSelectedRun(run)}>
+                  View
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {selectedRun && (
-        <section>
-          <h2>{new Date(selectedRun.timestamp).toLocaleString()}</h2>
-          <button type="button" onClick={() => setSelectedRun(null)}>
-            Close
-          </button>
+        <section className="run-selected">
+          <div className="run-selected-head">
+            <h2 className="mono">{new Date(selectedRun.timestamp).toLocaleString()}</h2>
+            <button type="button" className="btn btn--sm btn--ghost" onClick={() => setSelectedRun(null)}>
+              Close
+            </button>
+          </div>
           <DetectionResultView
             result={{
               runId: selectedRun._id,

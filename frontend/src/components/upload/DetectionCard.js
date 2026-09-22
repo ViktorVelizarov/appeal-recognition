@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import api from '../../api/axios';
 import ShoppingResults from './ShoppingResults';
 
-const DetectionCard = ({ detection }) => {
+const DetectionCard = ({ detection, index = 0 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [items, setItems] = useState(null);
@@ -25,15 +25,27 @@ const DetectionCard = ({ detection }) => {
   };
 
   return (
-    <article>
-      <img src={detection.imageUrl} alt={`Detected ${detection.class}`} width="160" />
-      <p>
-        {detection.class} ({Math.round(detection.confidence * 100)}%)
-      </p>
-      <button type="button" onClick={handleFindSimilar} disabled={loading}>
-        {loading ? 'Searching...' : 'Find similar items'}
-      </button>
-      {error && <p role="alert">{error}</p>}
+    <article className="det">
+      <header className="det-head">
+        <span className="det-id">D-0{index + 1}</span>
+        <h3 className="det-name">{detection.class}</h3>
+        <span className="det-conf">{(detection.confidence || 0).toFixed(2)}</span>
+      </header>
+
+      {!items && (
+        <div className="det-actions">
+          <button type="button" className="btn btn--sm" onClick={handleFindSimilar} disabled={loading}>
+            {loading ? 'Searching…' : 'Find similar items'}
+          </button>
+        </div>
+      )}
+
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
+
       {items && <ShoppingResults items={items} />}
     </article>
   );

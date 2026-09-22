@@ -26,29 +26,73 @@ const Login = () => {
   };
 
   return (
-    <main>
-      <h1>Log in</h1>
-      {error && <p role="alert">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <p>
-          <label>
-            Email <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </label>
-        </p>
-        <p>
-          <label>
-            Password{' '}
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </label>
-        </p>
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Logging in...' : 'Log in'}
-        </button>
-      </form>
-      <p>
-        No account? <Link to="/register">Register</Link>
-      </p>
-    </main>
+    <>
+      <header className="auth-top">
+        <Link className="logo" to="/" aria-label="StyleStealer home">
+          <span>
+            Style
+            <br />
+            Stealer
+          </span>
+        </Link>
+        <Link className="auth-top-link" to="/register">
+          New here? Create an account
+        </Link>
+      </header>
+
+      <main className="auth-main">
+        <form className="auth-card" onSubmit={handleSubmit}>
+          <div>
+            <h1 className="mega">
+              Sign in
+              <b>.</b>
+            </h1>
+            <p className="auth-sub">Welcome back. Sign in to see your scans and matches.</p>
+          </div>
+
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+
+          <div className="auth-fields">
+            <div className="field">
+              <label htmlFor="login-email">Email</label>
+              <input
+                id="login-email"
+                type="email"
+                placeholder="you@email.com"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="login-password">Password</label>
+              <input
+                id="login-password"
+                type="password"
+                placeholder="Your password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="btn auth-cta" disabled={submitting}>
+            {submitting ? 'Signing in…' : 'Sign in'} <span aria-hidden="true">&#8599;</span>
+          </button>
+
+          <p className="auth-alt">
+            New here? <Link to="/register">Create an account</Link>
+          </p>
+        </form>
+      </main>
+    </>
   );
 };
 

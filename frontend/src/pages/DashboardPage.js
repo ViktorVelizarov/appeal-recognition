@@ -26,19 +26,15 @@ const DashboardPage = () => {
       return;
     }
     setSelectedFile(file);
+    handleUpload(file);
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Please select an image first');
-      return;
-    }
-
+  const handleUpload = async (file) => {
     setUploading(true);
     setError(null);
 
     const formData = new FormData();
-    formData.append('image', selectedFile);
+    formData.append('image', file);
 
     try {
       const { data } = await api.post('/upload', formData);
@@ -62,21 +58,45 @@ const DashboardPage = () => {
   };
 
   return (
-    <div>
-      <h1>Upload a photo</h1>
+    <div className="app-wrap">
+      <div className="app-head">
+        <h1 className="mega">
+          Upload a photo
+          <b>.</b>
+        </h1>
+        <p className="auth-sub">AI vision finds every garment in the photo and shows where to buy it.</p>
+      </div>
 
-      <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} />
-      <button type="button" onClick={handleUpload} disabled={!selectedFile || uploading}>
-        {uploading ? 'Uploading...' : 'Upload and detect'}
-      </button>
+      <div className="dropzone" data-disabled={uploading || undefined}>
+        <label className="dropzone-in">
+          <input
+            className="dropzone-file"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
+          <span className="dropzone-t">
+            {uploading ? 'Scanning…' : 'Drop a photo'}
+            {!uploading && <b>.</b>}
+          </span>
+          <span className="dropzone-s mono">
+            {selectedFile ? selectedFile.name : 'or choose a file · JPG PNG WEBP'}
+          </span>
+        </label>
+      </div>
 
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
 
       {result && (
-        <section>
-          <h2>Results</h2>
+        <>
+          <h2 className="sr">Detected garments</h2>
           <DetectionResultView result={result} />
-        </section>
+        </>
       )}
     </div>
   );
