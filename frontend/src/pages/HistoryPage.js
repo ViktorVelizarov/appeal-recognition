@@ -1,34 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Grid,
-  Skeleton,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
-  Button,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import SellIcon from '@mui/icons-material/Sell';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import HistoryCard from '../components/history/HistoryCard';
 import DetectionResultView from '../components/upload/DetectionResultView';
-import EmptyState from '../components/common/EmptyState';
-
-const SkeletonGrid = () => (
-  <Grid container spacing={2}>
-    {Array.from({ length: 6 }).map((_, i) => (
-      <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
-        <Skeleton variant="rounded" sx={{ aspectRatio: '4 / 3', width: '100%' }} />
-        <Skeleton width="60%" sx={{ mt: 1 }} />
-      </Grid>
-    ))}
-  </Grid>
-);
 
 const HistoryPage = () => {
   const [runs, setRuns] = useState([]);
@@ -55,60 +28,50 @@ const HistoryPage = () => {
   }, []);
 
   return (
-    <Box>
-      <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
-        Detection history
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        Every photo you&apos;ve run through detection, in one place.
-      </Typography>
+    <div>
+      <h1>Detection history</h1>
 
-      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+      {error && <p role="alert">{error}</p>}
+      {loading && <p>Loading...</p>}
 
-      {loading ? (
-        <SkeletonGrid />
-      ) : runs.length === 0 ? (
-        <EmptyState
-          icon={<SellIcon />}
-          title="No tags yet"
-          description="Upload your first photo and it will show up here."
-          action={
-            <Button component={RouterLink} to="/app" variant="contained">
-              Upload a photo
-            </Button>
-          }
-        />
-      ) : (
-        <Grid container spacing={2}>
-          {runs.map((run) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={run._id}>
-              <HistoryCard run={run} onClick={() => setSelectedRun(run)} />
-            </Grid>
-          ))}
-        </Grid>
+      {!loading && runs.length === 0 && (
+        <p>
+          No detections yet. <Link to="/app">Upload a photo</Link>
+        </p>
       )}
 
-      <Dialog open={Boolean(selectedRun)} onClose={() => setSelectedRun(null)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {selectedRun && new Date(selectedRun.timestamp).toLocaleString()}
-          <IconButton onClick={() => setSelectedRun(null)}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          {selectedRun && (
-            <DetectionResultView
-              result={{
-                runId: selectedRun._id,
-                originalImageUrl: selectedRun.originalImageUrl,
-                detectedImageUrl: selectedRun.detectedImageUrl,
-                croppedImages: selectedRun.croppedImages,
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-    </Box>
+      <ul>
+        {runs.map((run) => (
+          <li key={run._id}>
+            {new Date(run.timestamp).toLocaleString()} - {run.status}
+            {run.status === 'completed' && ` - ${run.croppedImages?.length || 0} items`}
+            {run.error && ` - ${run.error}`}{' '}
+            {run.status === 'completed' && (
+              <button type="button" onClick={() => setSelectedRun(run)}>
+                View
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {selectedRun && (
+        <section>
+          <h2>{new Date(selectedRun.timestamp).toLocaleString()}</h2>
+          <button type="button" onClick={() => setSelectedRun(null)}>
+            Close
+          </button>
+          <DetectionResultView
+            result={{
+              runId: selectedRun._id,
+              originalImageUrl: selectedRun.originalImageUrl,
+              detectedImageUrl: selectedRun.detectedImageUrl,
+              croppedImages: selectedRun.croppedImages,
+            }}
+          />
+        </section>
+      )}
+    </div>
   );
 };
 

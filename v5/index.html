@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StyleStealer — Find the exact look</title>
+<meta name="description" content="StyleStealer uses AI vision to detect every garment in a photo, then finds the same or similar pieces and shows where to buy them online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=IBM+Plex+Mono:wght@400;500&family=Hanken+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#top" aria-label="StyleStealer home">Style<em>Stealer</em></a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#method">Method</a>
+    <a href="#demo">Demo</a>
+  </nav>
+  <a class="pill pill--sm" href="#demo" data-cta>Try a demo</a>
+</header>
+
+<main id="top">
+
+  <div class="wrap">
+    <!-- thin orbit lines: continue behind the text column and below the hero into the logo row -->
+    <svg class="orbits" viewBox="0 0 1440 1100" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="#111" stroke-width="1" vector-effect="non-scaling-stroke" opacity=".17" transform="rotate(-16 460 640)">
+        <ellipse cx="460" cy="640" rx="330" ry="150" vector-effect="non-scaling-stroke"/>
+        <ellipse cx="460" cy="640" rx="520" ry="250" vector-effect="non-scaling-stroke"/>
+        <ellipse cx="460" cy="640" rx="720" ry="360" vector-effect="non-scaling-stroke"/>
+        <ellipse cx="460" cy="640" rx="940" ry="480" vector-effect="non-scaling-stroke"/>
+      </g>
+      <g fill="#111" opacity=".55" transform="rotate(-16 460 640)">
+        <circle cx="790" cy="640" r="3.5"/>
+        <circle cx="-260" cy="640" r="3"/>
+      </g>
+      <circle cx="205" cy="885" r="4" fill="#a65420" opacity=".9"/>
+    </svg>
+
+    <section class="hero" aria-labelledby="h1">
+      <div class="hero-copy">
+        <p class="mono">PLATE I &nbsp;/&nbsp; GARMENT DETECTION &nbsp;/&nbsp; N&deg;0417</p>
+        <h1 id="h1">Find the <em>exact</em> look in any photograph.</h1>
+        <p class="lede">StyleStealer reads an outfit photo with AI vision, finds the same or similar clothes, and shows you where to buy them online.</p>
+        <div class="cta-row">
+          <a class="pill" href="#demo" data-cta>Try a demo <span aria-hidden="true">&rarr;</span></a>
+          <span class="mono">3 sample photos</span>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <!-- HERO SLOT: right half, 4:5 portrait. Grainy vintage illustration of a classical robed scholar studying charts, isolated on white.
+             To drop in the real art: replace .slot-fill with <img class="slot-img" src="..." alt="">, delete .slot-note. Zero layout change. -->
+        <figure class="hero-figure" data-slot="hero">
+          <div class="slot-fill" aria-hidden="true"></div>
+          <figcaption class="slot-note">HERO SLOT &middot; 4:5 &middot; GRAINY ENGRAVING ON WHITE</figcaption>
+        </figure>
+        <p class="mono fig-c">FIG. I &mdash; The scholar reads the chart</p>
+      </div>
+    </section>
+
+    <section class="logos" aria-label="Where StyleStealer looks">
+      <p class="mono">Matches drawn from online shops such as</p>
+      <ul>
+        <li class="lg lg1">Maison Nord</li>
+        <li class="lg lg2">Threadline</li>
+        <li class="lg lg3">OUTFIT/CO</li>
+        <li class="lg lg4">Halden &amp; Rowe</li>
+        <li class="lg lg5">PARCEL</li>
+        <li class="lg lg6">Fenwick Lane</li>
+      </ul>
+      <p class="mono note">Sample shop names, shown for illustration.</p>
+    </section>
+  </div>
+
+  <!-- METHOD -->
+  <section class="method" id="method" aria-labelledby="mh">
+    <div class="method-l">
+      <p class="mono">&sect; I &mdash; Method</p>
+      <h2 id="mh">Three <em>movements</em>, one photograph.</h2>
+    </div>
+    <ol class="rows">
+      <li><span class="num">I</span><div><h3>Detect</h3><p>A vision model finds every garment and accessory in the photo and scores its confidence.</p></div></li>
+      <li><span class="num">II</span><div><h3>Match</h3><p>Each piece is searched across online shops for the same item, then for close alternatives.</p></div></li>
+      <li><span class="num">III</span><div><h3>Buy</h3><p>Shop, price and a direct link for every match, closest first.</p></div></li>
+    </ol>
+  </section>
+
+  <!-- DEMO -->
+  <section class="demo" id="demo" data-demo data-state="idle" aria-labelledby="dh">
+    <div class="demo-head">
+      <p class="mono">&sect; II &mdash; Demonstration &nbsp;/&nbsp; Sample output, illustrative</p>
+      <h2 id="dh">Try a <em>demo.</em></h2>
+      <p class="lede">Choose one of three plates. StyleStealer marks each garment and lists where to buy it.</p>
+    </div>
+
+    <div class="picks" role="group" aria-label="Sample photographs">
+      <button type="button" class="pick" data-sample="0" data-src="" aria-pressed="false"><span class="pick-n">I</span><span class="mono">IMG-0417<br>Street / overcast</span></button>
+      <button type="button" class="pick" data-sample="1" data-src="" aria-pressed="false"><span class="pick-n">II</span><span class="mono">IMG-0932<br>Studio / denim</span></button>
+      <button type="button" class="pick" data-sample="2" data-src="" aria-pressed="false"><span class="pick-n">III</span><span class="mono">IMG-1208<br>Cafe / knitwear</span></button>
+    </div>
+
+    <div class="grid">
+      <div class="stage" data-stage>
+        <div class="stage-media" data-media aria-hidden="true"></div>
+        <div class="boxes" data-boxes></div>
+        <p class="stage-idle mono">Select a plate</p>
+      </div>
+      <div class="out" aria-live="polite">
+        <dl class="tele">
+          <div><dt>Frame</dt><dd data-out="id">--</dd></div>
+          <div><dt>Scene</dt><dd data-out="scene">--</dd></div>
+          <div><dt>Status</dt><dd data-out="status">Idle</dd></div>
+          <div><dt>Found</dt><dd data-out="count">--</dd></div>
+          <div><dt>Time</dt><dd data-out="latency">--</dd></div>
+          <div><dt>UTC</dt><dd data-out="time">--</dd></div>
+        </dl>
+        <p class="empty" data-empty>No plate chosen. Pick a photograph to see each garment found and where it is sold.</p>
+        <div class="results" data-results></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p class="foot-big">Every look, <em>sourced.</em></p>
+  <a class="pill" href="#demo" data-cta>Try a demo <span aria-hidden="true">&rarr;</span></a>
+  <p class="mono">StyleStealer &copy; 2026 &nbsp;/&nbsp; 51.5072 N 0.1276 W</p>
+</footer>
+
+<script src="demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StyleStealer — Steal the look</title>
+<meta name="description" content="StyleStealer uses AI vision to detect every garment in a photo, then finds the same or similar pieces and shows where to buy them online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Try a demo</span><i>&bull;</i><span>3 free scans</span><i>&bull;</i><span>Find the same clothes</span><i>&bull;</i><span>See where to buy</span><i>&bull;</i>
+    <span>Try a demo</span><i>&bull;</i><span>3 free scans</span><i>&bull;</i><span>Find the same clothes</span><i>&bull;</i><span>See where to buy</span><i>&bull;</i>
+    <span>Try a demo</span><i>&bull;</i><span>3 free scans</span><i>&bull;</i><span>Find the same clothes</span><i>&bull;</i><span>See where to buy</span><i>&bull;</i>
+    <span>Try a demo</span><i>&bull;</i><span>3 free scans</span><i>&bull;</i><span>Find the same clothes</span><i>&bull;</i><span>See where to buy</span><i>&bull;</i>
+  </div>
+</div>
+
+<header class="bar">
+  <a class="logo" href="#top" aria-label="StyleStealer home"><span>Style<br>Stealer</span></a>
+  <a class="cell" href="#method">Method</a>
+  <a class="cell" href="#pricing">Pricing</a>
+  <a class="cell cell--auth" href="signin.html">Sign in</a>
+  <a class="cell cell--cta" href="signup.html" data-cta>Try a demo</a>
+</header>
+
+<main id="top">
+
+  <section class="hero" aria-labelledby="h1">
+    <!-- HERO SLOT: right half, full column height (cover). Generated B&W photograph, dithered to a 1-bit bitmap.
+         Swap hero.png for the final art: same box, no layout change. -->
+    <figure class="hero-slot" data-slot="hero">
+      <img class="slot-img" src="hero.png" alt="" width="1440" height="1920" fetchpriority="high">
+      <span class="reg tl" aria-hidden="true"></span><span class="reg br" aria-hidden="true"></span>
+      <figcaption class="fig" aria-hidden="true">FIG.01 &nbsp;/&nbsp; DITHER BAYER 8&times;8 &nbsp;/&nbsp; X 0812 Y 0447</figcaption>
+      <div class="rule-v" aria-hidden="true"></div>
+    </figure>
+
+    <div class="hero-copy">
+      <h1 id="h1" class="mega">Steal<br>the<br>look<b>.</b></h1>
+      <p class="lede">Upload any outfit photo. AI vision finds every garment, matches the same or similar clothes, and tells you where to buy them online.</p>
+      <a class="btn" href="signup.html" data-cta>Try a demo <span aria-hidden="true">&#8599;</span></a>
+      <p class="mono">3 FREE SCANS &nbsp;/&nbsp; THEN CHOOSE A PLAN</p>
+    </div>
+
+    <div class="word" aria-hidden="true">StyleStealer</div>
+  </section>
+
+  <div class="dither" aria-hidden="true"></div>
+
+  <!-- METHOD: three stacked slabs -->
+  <section class="method" id="method" aria-labelledby="mh">
+    <h2 id="mh" class="sr">How StyleStealer works</h2>
+    <article class="slab slab--k">
+      <p class="word-l">Detect</p>
+      <div class="slab-c">
+        <p class="slab-t">A vision model finds every garment and accessory in the photo and scores its confidence.</p>
+        <svg class="glyph" viewBox="0 0 240 240" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M20 70V20h50M170 20h50v50M220 170v50h-50M70 220H20v-50"/><path d="M96 120h48M120 96v48" opacity=".7"/></g><text x="34" y="40" fill="currentColor" font-family="Space Mono, monospace" font-size="11">D-01 0.96</text></svg>
+      </div>
+      <p class="slab-m mono">01 / 03 &nbsp; T+0.3S &nbsp; X 0812 Y 0447</p>
+    </article>
+    <article class="slab slab--b">
+      <p class="word-l">Match</p>
+      <div class="slab-c">
+        <p class="slab-t">Each crop is searched across online catalogues for the same piece, then close alternatives.</p>
+        <svg class="glyph" viewBox="0 0 240 240" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="20" y="70" width="80" height="100"/><rect x="140" y="70" width="80" height="100"/><path d="M104 120h32" stroke-dasharray="4 5"/></g><text x="24" y="62" fill="currentColor" font-family="Space Mono, monospace" font-size="11">SRC</text><text x="144" y="62" fill="currentColor" font-family="Space Mono, monospace" font-size="11">SAME / SIMILAR</text></svg>
+      </div>
+      <p class="slab-m mono">02 / 03 &nbsp; T+0.6S &nbsp; N 3 MATCHES / ITEM</p>
+    </article>
+    <article class="slab slab--o">
+      <p class="word-l">Buy</p>
+      <div class="slab-c">
+        <p class="slab-t">Shop, price and a direct link for every match, closest first.</p>
+        <svg class="glyph" viewBox="0 0 240 240" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M30 40h110l70 80-70 80H30z"/><circle cx="62" cy="120" r="10"/><path d="M110 150l52-52M126 98h36v36"/></g></svg>
+      </div>
+      <p class="slab-m mono">03 / 03 &nbsp; T+0.9S &nbsp; LINK OUT</p>
+    </article>
+  </section>
+
+  <!-- PRICING -->
+  <section class="demo pricing" id="pricing" aria-labelledby="prh">
+    <h2 id="prh" class="mega mega--m">Pricing<b>.</b></h2>
+    <p class="demo-sub">Three scans free when you sign up. After that, one plan &mdash; pick how you pay.</p>
+    <div class="plan">
+      <input type="radio" name="billing" id="bill-m" class="toggle-input" checked>
+      <input type="radio" name="billing" id="bill-y" class="toggle-input">
+      <div class="toggle">
+        <label for="bill-m" class="toggle-opt">Monthly</label>
+        <label for="bill-y" class="toggle-opt">Annual <span class="save mono">SAVE 20%</span></label>
+      </div>
+      <div class="plan-card">
+        <p class="plan-name mono">STYLESTEALER PLAN</p>
+        <p class="plan-price"><span class="amt amt-m">$19<i>/mo</i></span><span class="amt amt-y">$182<i>/yr</i></span></p>
+        <p class="plan-sub mono">$15.17/mo, billed annually</p>
+        <ul class="plan-list">
+          <li><span class="mono">01</span>Unlimited photo scans</li>
+          <li><span class="mono">02</span>Same-item and similar-item matches</li>
+          <li><span class="mono">03</span>Direct buy links, every result</li>
+          <li><span class="mono">04</span>Scan history saved to your account</li>
+        </ul>
+        <a class="btn plan-cta" href="signup.html" data-cta>Try a demo <span aria-hidden="true">&#8599;</span></a>
+        <p class="mono plan-fine">3 FREE SCANS INCLUDED &nbsp;/&nbsp; CANCEL ANYTIME</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-top">
+    <p class="mono">STYLESTEALER &copy; 2026 &nbsp;/&nbsp; 51.5072 N 0.1276 W &nbsp;/&nbsp; <a class="foot-link" href="#pricing">Pricing</a></p>
+    <a class="btn" href="signup.html" data-cta>Try a demo <span aria-hidden="true">&#8599;</span></a>
+  </div>
+  <div class="word word--foot" aria-hidden="true">StyleStealer</div>
+</footer>
+
+</body>
+</html>

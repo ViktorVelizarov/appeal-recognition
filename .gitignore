@@ -6,3 +6,7 @@ python/runs/
 .env
 
 /credentials
+.claude/
+.impeccable/
+.mcp.json
+photos/

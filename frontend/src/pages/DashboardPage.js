@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Alert, CircularProgress, Fade } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import api from '../api/axios';
-import UploadDropzone from '../components/upload/UploadDropzone';
 import DetectionResultView from '../components/upload/DetectionResultView';
-import SwingTag from '../components/common/SwingTag';
+
+const MAX_FILE_SIZE_MB = 15;
 
 const DashboardPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -12,9 +10,22 @@ const DashboardPage = () => {
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
 
-  const handleFileChange = (file) => {
-    setSelectedFile(file);
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
     setError(null);
+    if (!file) {
+      setSelectedFile(null);
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      setError('Please choose an image file');
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      setError(`Image must be smaller than ${MAX_FILE_SIZE_MB}MB`);
+      return;
+    }
+    setSelectedFile(file);
   };
 
   const handleUpload = async () => {
@@ -51,52 +62,23 @@ const DashboardPage = () => {
   };
 
   return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 0.5 }}>
-        Upload a photo
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        We&apos;ll tag every item we find and point you to where to buy it.
-      </Typography>
+    <div>
+      <h1>Upload a photo</h1>
 
-      <SwingTag accentColor="text.primary" contentSx={{ p: { xs: 2, sm: 3 } }} sx={{ mb: 4 }}>
-        <UploadDropzone
-          file={selectedFile}
-          onFileChange={handleFileChange}
-          disabled={uploading}
-          onValidationError={setError}
-        />
+      <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} />
+      <button type="button" onClick={handleUpload} disabled={!selectedFile || uploading}>
+        {uploading ? 'Uploading...' : 'Upload and detect'}
+      </button>
 
-        {error && (
-          <Alert severity="error" sx={{ mt: 2 }}>
-            {error}
-          </Alert>
-        )}
-
-        <Button
-          fullWidth
-          variant="contained"
-          size="large"
-          startIcon={!uploading && <CloudUploadIcon />}
-          onClick={handleUpload}
-          disabled={!selectedFile || uploading}
-          sx={{ mt: 2 }}
-        >
-          {uploading ? <CircularProgress size={22} color="inherit" /> : 'Upload and detect'}
-        </Button>
-      </SwingTag>
+      {error && <p role="alert">{error}</p>}
 
       {result && (
-        <Fade in>
-          <Box>
-            <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
-              Results
-            </Typography>
-            <DetectionResultView result={result} />
-          </Box>
-        </Fade>
+        <section>
+          <h2>Results</h2>
+          <DetectionResultView result={result} />
+        </section>
       )}
-    </Box>
+    </div>
   );
 };
 

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StyleStealer — Every thread, decoded</title>
+<meta name="description" content="StyleStealer uses AI vision to detect every garment in a photo, then finds the same or similar pieces and shows where to buy them online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@200..900&family=Martian+Mono:wght@300..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#top" aria-label="StyleStealer home">StyleStealer</a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#pipeline">Pipeline</a>
+    <a href="#demo">Demo</a>
+  </nav>
+  <span class="mono-tag hide-s" aria-hidden="true">LAT 40.7128 N &nbsp; LON 74.0060 W &nbsp; 18:42:07Z</span>
+  <a class="btn btn--sm" href="#demo" data-cta>Try a demo</a>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="h1">
+    <!-- HERO SLOT: full-bleed, ~16:10 cover. Golden-hour clouds built from amber binary digits on a dark teal sky.
+         Headline sits on the darkest area (left); clouds fill the lower right.
+         To drop in the real art: replace .slot-fill with <img class="slot-img" src="..." alt="">, delete .slot-note. Zero layout change. -->
+    <div class="hero-slot" data-slot="hero">
+      <div class="slot-fill" aria-hidden="true"></div>
+      <p class="slot-note">HERO SLOT &middot; FULL-BLEED &middot; AMBER BINARY CLOUDS / DARK TEAL SKY</p>
+    </div>
+    <div class="scrim" aria-hidden="true"></div>
+    <div class="ticks-l" aria-hidden="true"></div>
+    <div class="ticks-r" aria-hidden="true"></div>
+
+    <div class="hero-copy">
+      <p class="mono-tag">SS-VISION / GARMENT DETECTION / v2.4</p>
+      <h1 id="h1" class="display">Every<br>thread,<br><em>decoded.</em></h1>
+      <p class="lede">Upload any outfit photo. StyleStealer's AI vision finds each garment, matches the same or similar pieces, and shows where to buy them online.</p>
+      <div class="cta-row">
+        <a class="btn" href="#demo" data-cta>Try a demo <span aria-hidden="true">&rarr;</span></a>
+        <span class="mono-tag">3 SAMPLE PHOTOS &middot; ONE CLICK EACH</span>
+      </div>
+    </div>
+
+    <p class="cloud-tag mono-tag" aria-hidden="true">CLOUD 0x4F2A &middot; ALT 3,200 M<br>BIT-DEPTH 8 &middot; N 1,048,576</p>
+    <div class="bitstrip" aria-hidden="true"><span data-bits></span></div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section class="pipe" id="pipeline" aria-labelledby="ph">
+    <div class="pipe-l">
+      <p class="mono-tag">&sect;01 / PIPELINE</p>
+      <h2 class="mega" id="ph">Pipe<wbr>line</h2>
+    </div>
+    <ol class="pipe-r">
+      <li><span class="hex">0x01</span><h3>Detect</h3><p>A vision model draws a box around every garment and accessory in the frame, with a confidence score for each.</p></li>
+      <li><span class="hex">0x02</span><h3>Match</h3><p>Each crop is searched against online catalogues. You see the same piece where it exists, and close alternatives where it does not.</p></li>
+      <li><span class="hex">0x03</span><h3>Buy</h3><p>Shop, price and a direct link, ranked by how close the match is. No hunting through tabs.</p></li>
+    </ol>
+  </section>
+
+  <!-- DEMO -->
+  <section class="demo" id="demo" data-demo data-state="idle" aria-labelledby="dh">
+    <div class="demo-head">
+      <p class="mono-tag">&sect;02 / LIVE SAMPLE</p>
+      <h2 class="display display--s" id="dh">Pick a photo.<br><em>Watch it decode.</em></h2>
+    </div>
+
+    <div class="console">
+      <div class="picks" role="group" aria-label="Sample photographs">
+        <button type="button" class="pick" data-sample="0" data-src="" aria-pressed="false"><span class="pick-n">01</span><span class="pick-t"><b>IMG-0417</b>Street / overcast</span></button>
+        <button type="button" class="pick" data-sample="1" data-src="" aria-pressed="false"><span class="pick-n">02</span><span class="pick-t"><b>IMG-0932</b>Studio / denim</span></button>
+        <button type="button" class="pick" data-sample="2" data-src="" aria-pressed="false"><span class="pick-n">03</span><span class="pick-t"><b>IMG-1208</b>Cafe / knitwear</span></button>
+      </div>
+
+      <div class="stage" data-stage>
+        <div class="stage-media" data-media aria-hidden="true"></div>
+        <div class="bits-field" aria-hidden="true"><span data-bits></span></div>
+        <div class="boxes" data-boxes></div>
+        <p class="stage-idle mono-tag">AWAITING INPUT</p>
+      </div>
+
+      <div class="out" aria-live="polite">
+        <dl class="tele">
+          <div><dt>Frame</dt><dd data-out="id">--</dd></div>
+          <div><dt>Scene</dt><dd data-out="scene">--</dd></div>
+          <div><dt>Status</dt><dd data-out="status">Idle</dd></div>
+          <div><dt>Found</dt><dd data-out="count">--</dd></div>
+          <div><dt>Time</dt><dd data-out="latency">--</dd></div>
+          <div><dt>UTC</dt><dd data-out="time">--</dd></div>
+        </dl>
+        <p class="empty" data-empty>No frame loaded. Choose a sample photo to run detection and see where each piece is sold. Sample output is illustrative.</p>
+        <div class="results" data-results></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p class="mono-tag">&sect;03 / END OF FILE</p>
+  <p class="display display--m">Decode your<br><em>first look.</em></p>
+  <a class="btn" href="#demo" data-cta>Try a demo <span aria-hidden="true">&rarr;</span></a>
+  <div class="bitstrip bitstrip--foot" aria-hidden="true"><span data-bits></span></div>
+  <p class="mono-tag foot-c">STYLESTEALER &copy; 2026 &nbsp;/&nbsp; 51.5072 N 0.1276 W</p>
+</footer>
+
+<script>
+  /* data-as-material: fill decorative binary fields with the ASCII bits of STYLESTEALER */
+  (function () {
+    var w = '01010011 01010100 01011001 01001100 01000101 01010011 01010100 01000101 01000001 01001100 01000101 01010010 ';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bits]'), function (el) {
+      var n = el.parentNode.className.indexOf('bits-field') > -1 ? 40 : 6;
+      el.textContent = new Array(n + 1).join(w);
+    });
+  })();
+</script>
+<script src="demo.js"></script>
+</body>
+</html>

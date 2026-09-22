@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StyleStealer — Steal the look</title>
+<meta name="description" content="StyleStealer uses AI vision to detect every garment in a photo, then finds the same or similar pieces and shows where to buy them online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Try a demo</span><i>&bull;</i><span>3 sample photos</span><i>&bull;</i><span>Find the same clothes</span><i>&bull;</i><span>See where to buy</span><i>&bull;</i>
+    <span>Try a demo</span><i>&bull;</i><span>3 sample photos</span><i>&bull;</i><span>Find the same clothes</span><i>&bull;</i><span>See where to buy</span><i>&bull;</i>
+    <span>Try a demo</span><i>&bull;</i><span>3 sample photos</span><i>&bull;</i><span>Find the same clothes</span><i>&bull;</i><span>See where to buy</span><i>&bull;</i>
+    <span>Try a demo</span><i>&bull;</i><span>3 sample photos</span><i>&bull;</i><span>Find the same clothes</span><i>&bull;</i><span>See where to buy</span><i>&bull;</i>
+  </div>
+</div>
+
+<header class="bar">
+  <a class="logo" href="#top" aria-label="StyleStealer home"><span>Style<br>Stealer</span></a>
+  <a class="cell" href="#method">Method</a>
+  <a class="cell" href="#demo">Demo</a>
+  <a class="cell cell--cta" href="#demo" data-cta>Try a demo</a>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="h1">
+    <!-- HERO SLOT: right half, full column height (~ 5:6 portrait at 1440w). Monumental dithered B&W subject emerging from darkness;
+         right side lit, left dissolving to black so it merges with the headline column.
+         To drop in the real art: replace .slot-fill with <img class="slot-img" src="..." alt="">, delete .slot-note. Zero layout change. -->
+    <div class="hero-slot" data-slot="hero">
+      <div class="slot-fill" aria-hidden="true"></div>
+      <p class="slot-note">HERO SLOT &middot; RIGHT HALF &middot; DITHERED B&amp;W SUBJECT</p>
+      <span class="reg tl" aria-hidden="true"></span><span class="reg br" aria-hidden="true"></span>
+      <p class="fig" aria-hidden="true">FIG.01 &nbsp;/&nbsp; DITHER BAYER 8&times;8 &nbsp;/&nbsp; X 0812 Y 0447</p>
+      <div class="rule-v" aria-hidden="true"></div>
+    </div>
+
+    <div class="hero-copy">
+      <p class="mono">SS-VISION &nbsp;/&nbsp; GARMENT DETECTION &nbsp;/&nbsp; ID 0417</p>
+      <h1 id="h1" class="mega">Steal<br>the<br>look<b>.</b></h1>
+      <p class="lede">Show StyleStealer any outfit photo. AI vision finds every garment, matches the same or similar clothes, and tells you where to buy them online.</p>
+      <a class="btn" href="#demo" data-cta>Try a demo <span aria-hidden="true">&#8599;</span></a>
+    </div>
+
+    <div class="word" aria-hidden="true">StyleStealer</div>
+  </section>
+
+  <div class="dither" aria-hidden="true"></div>
+
+  <!-- METHOD -->
+  <section class="method" id="method" aria-labelledby="mh">
+    <div class="sec-head"><p class="mono">&sect;01 &mdash; METHOD</p><h2 id="mh" class="mono">Photo &rarr; garments &rarr; shops</h2></div>
+    <ol class="rows">
+      <li><span class="mono">01</span><span class="w">Detect</span><p>A vision model finds every garment and accessory in the photo and scores its confidence.</p></li>
+      <li><span class="mono">02</span><span class="w">Match</span><p>Each crop is searched across online catalogues for the same piece, then close alternatives.</p></li>
+      <li><span class="mono">03</span><span class="w">Buy</span><p>Shop, price and a direct link for every match, closest first.</p></li>
+    </ol>
+  </section>
+
+  <!-- DEMO -->
+  <section class="demo" id="demo" data-demo data-state="idle" aria-labelledby="dh">
+    <div class="sec-head"><p class="mono">&sect;02 &mdash; DEMO</p><p class="mono">SAMPLE OUTPUT &middot; ILLUSTRATIVE</p></div>
+    <h2 id="dh" class="mega mega--m">Try a demo<b>.</b></h2>
+
+    <div class="picks" role="group" aria-label="Sample photographs">
+      <button type="button" class="pick" data-sample="0" data-src="" aria-pressed="false"><span class="pick-n">01</span><span class="mono">IMG-0417 &middot; Street / overcast</span></button>
+      <button type="button" class="pick" data-sample="1" data-src="" aria-pressed="false"><span class="pick-n">02</span><span class="mono">IMG-0932 &middot; Studio / denim</span></button>
+      <button type="button" class="pick" data-sample="2" data-src="" aria-pressed="false"><span class="pick-n">03</span><span class="mono">IMG-1208 &middot; Cafe / knitwear</span></button>
+    </div>
+
+    <div class="grid">
+      <div class="stage" data-stage>
+        <div class="stage-media" data-media aria-hidden="true"></div>
+        <div class="stage-dither" aria-hidden="true"></div>
+        <div class="boxes" data-boxes></div>
+        <p class="stage-idle mono">AWAITING INPUT</p>
+      </div>
+
+      <div class="out" aria-live="polite">
+        <dl class="tele">
+          <div><dt>Frame</dt><dd data-out="id">--</dd></div>
+          <div><dt>Scene</dt><dd data-out="scene">--</dd></div>
+          <div><dt>Status</dt><dd data-out="status">Idle</dd></div>
+          <div><dt>Found</dt><dd data-out="count">--</dd></div>
+          <div><dt>Time</dt><dd data-out="latency">--</dd></div>
+          <div><dt>UTC</dt><dd data-out="time">--</dd></div>
+        </dl>
+        <p class="empty" data-empty>No frame loaded. Pick one of the three photos to see each garment found and where it is sold.</p>
+        <div class="results" data-results></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-top">
+    <p class="mono">&sect;03 &mdash; END</p>
+    <a class="btn" href="#demo" data-cta>Try a demo <span aria-hidden="true">&#8599;</span></a>
+    <p class="mono">STYLESTEALER &copy; 2026 &nbsp;/&nbsp; 51.5072 N 0.1276 W</p>
+  </div>
+  <div class="word word--foot" aria-hidden="true">StyleStealer</div>
+</footer>
+
+<script src="demo.js"></script>
+</body>
+</html>
