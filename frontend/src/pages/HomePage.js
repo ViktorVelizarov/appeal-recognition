@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import heroImg from '../assets/hero.png';
+import detectHeroImg from '../assets/detect-hero.png';
+import matchHeroImg from '../assets/match-hero.png';
+import buyHeroImg from '../assets/buy-hero.png';
 
 const HomePage = () => (
   <>
@@ -49,9 +52,6 @@ const HomePage = () => (
           <img className="slot-img" src={heroImg} alt="" width="1440" height="1920" fetchPriority="high" />
           <span className="reg tl" aria-hidden="true"></span>
           <span className="reg br" aria-hidden="true"></span>
-          <figcaption className="fig" aria-hidden="true">
-            FIG.01 &nbsp;/&nbsp; DITHER BAYER 8&times;8 &nbsp;/&nbsp; X 0812 Y 0447
-          </figcaption>
           <div className="rule-v" aria-hidden="true"></div>
         </figure>
 
@@ -73,10 +73,6 @@ const HomePage = () => (
           </Link>
           <p className="mono">3 FREE SCANS &nbsp;/&nbsp; THEN CHOOSE A PLAN</p>
         </div>
-
-        <div className="word" aria-hidden="true">
-          StyleStealer
-        </div>
       </section>
 
       <div className="dither" aria-hidden="true"></div>
@@ -91,17 +87,8 @@ const HomePage = () => (
             <p className="slab-t">
               A vision model finds every garment and accessory in the photo and scores its confidence.
             </p>
-            <svg className="glyph" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
-              <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
-                <path d="M20 70V20h50M170 20h50v50M220 170v50h-50M70 220H20v-50" />
-                <path d="M96 120h48M120 96v48" opacity=".7" />
-              </g>
-              <text x="34" y="40" fill="currentColor" fontFamily="Space Mono, monospace" fontSize="11">
-                D-01 0.96
-              </text>
-            </svg>
+            <img className="glyph glyph--photo" src={detectHeroImg} alt="AI bounding boxes detecting a jacket, pants and shoes on a photographed outfit" />
           </div>
-          <p className="slab-m mono">01 / 03 &nbsp; T+0.3S &nbsp; X 0812 Y 0447</p>
         </article>
         <article className="slab slab--b">
           <p className="word-l">Match</p>
@@ -109,35 +96,15 @@ const HomePage = () => (
             <p className="slab-t">
               Each crop is searched across online catalogues for the same piece, then close alternatives.
             </p>
-            <svg className="glyph" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
-              <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
-                <rect x="20" y="70" width="80" height="100" />
-                <rect x="140" y="70" width="80" height="100" />
-                <path d="M104 120h32" strokeDasharray="4 5" />
-              </g>
-              <text x="24" y="62" fill="currentColor" fontFamily="Space Mono, monospace" fontSize="11">
-                SRC
-              </text>
-              <text x="144" y="62" fill="currentColor" fontFamily="Space Mono, monospace" fontSize="11">
-                SAME / SIMILAR
-              </text>
-            </svg>
+            <img className="glyph glyph--photo glyph--fit glyph--transparent" src={matchHeroImg} alt="A cropped source garment connected to catalogue thumbnails labeled same and similar" />
           </div>
-          <p className="slab-m mono">02 / 03 &nbsp; T+0.6S &nbsp; N 3 MATCHES / ITEM</p>
         </article>
         <article className="slab slab--o">
           <p className="word-l">Buy</p>
           <div className="slab-c">
             <p className="slab-t">Shop, price and a direct link for every match, closest first.</p>
-            <svg className="glyph" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
-              <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
-                <path d="M30 40h110l70 80-70 80H30z" />
-                <circle cx="62" cy="120" r="10" />
-                <path d="M110 150l52-52M126 98h36v36" />
-              </g>
-            </svg>
+            <img className="glyph glyph--photo glyph--fit" src={buyHeroImg} alt="A single matched jacket with its store, price, match percentage and view item link" />
           </div>
-          <p className="slab-m mono">03 / 03 &nbsp; T+0.9S &nbsp; LINK OUT</p>
         </article>
       </section>
 

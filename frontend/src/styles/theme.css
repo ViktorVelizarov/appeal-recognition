@@ -84,27 +84,44 @@ html { scrollbar-color: var(--accent) var(--black); }
 .slab { position: sticky; top: 0; overflow: hidden; min-height: 100svh; display: grid; grid-template-rows: 1fr auto; padding: clamp(24px, 4vw, 56px) var(--gut) 20px; border-top: 1px solid currentColor; }
 .slab--k { background: var(--black); color: var(--white); z-index: 1; }
 .slab--b { background: var(--white); color: var(--black); z-index: 2; }
-.slab--o { background: var(--accent); color: var(--black); z-index: 3; }
+.slab--o { background: var(--black); color: var(--white); z-index: 3; }
 .word-l { font-weight: 900; font-stretch: 125%; text-transform: uppercase; letter-spacing: -.04em; line-height: .8; font-size: clamp(72px, 14.5vw, 250px); align-self: start; margin-top: clamp(0px, 2vw, 24px); margin-left: -.03em; }
 .slab-c { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; align-self: end; padding-bottom: 24px; }
 .slab-t { max-width: 26ch; font-size: clamp(20px, 2.2vw, 32px); line-height: 1.3; font-weight: 500; font-stretch: 100%; text-wrap: balance; }
 .glyph { width: clamp(120px, 17vw, 240px); height: auto; flex: none; }
+.glyph--photo { aspect-ratio: 3 / 4; object-fit: cover; border: 1px solid currentColor; }
+.glyph--fit { width: clamp(320px, 42vw, 720px); aspect-ratio: 16 / 10; object-fit: contain; background: var(--white); }
+.glyph--transparent { background: none; border: none; }
 .slab-m { color: inherit; opacity: .8; border-top: 1px solid currentColor; padding-top: 10px; display: flex; justify-content: space-between; }
 .slab--o .slab-m, .slab--b .slab-m { opacity: 1; }
 .slab--b .mono { color: #4a4945; }
-.slab--o .mono { color: var(--black); }
+.slab--o .mono { color: var(--white); }
 @media (max-width: 900px) {
   .slab { position: relative; min-height: 78svh; }
   .slab-c { flex-direction: column; align-items: flex-start; }
   .slab-m { flex-direction: column; gap: 2px; }
 }
 
-/* ---------------------------------------------------------------- workspace tokens (bone/white)
-   Applied via .surface--bone: pricing card, dashboard, and history all use the
-   inverted bone/white "workspace" palette that v4b introduced for its results panel,
-   distinct from the pure-black marketing chrome. */
-.surface--bone { --fg: var(--black); --bg: var(--white); --mute: #4a4945; --rule: var(--black); --soft: #c9c8c3; --acc: var(--accent); --acc-ink: #b32800; color: var(--fg); background: var(--bg); }
-.surface--bone .mono { color: var(--mute); }
+/* ---------------------------------------------------------------- workspace tokens (ink / bone)
+   The logged-in app (Dashboard, History) is a themed .surface. Dark (.surface--ink) is the
+   default: pure black, bone text, signal-orange accent. Light (.surface--bone) is the
+   inverted bone/white workspace that v4b introduced for its results panel.
+   --acc-ink is the accent used as text; --acc-flip is the accent on a hover-inverted fill. */
+.surface { color: var(--fg); background: var(--bg); min-height: 100svh; transition: background-color .2s, color .2s; }
+.surface--ink { --fg: var(--white); --bg: var(--black); --mute: var(--grey); --rule: var(--white); --soft: var(--dim); --acc: var(--accent); --acc-ink: var(--accent); --acc-flip: #b32800; }
+.surface--bone { --fg: var(--black); --bg: var(--white); --mute: #4a4945; --rule: var(--black); --soft: #c9c8c3; --acc: var(--accent); --acc-ink: #b32800; --acc-flip: var(--accent); }
+.surface .mono { color: var(--mute); }
+.surface .auth-sub { color: var(--mute); }
+.surface .form-error { color: var(--acc-ink); }
+html[data-app-theme="dark"] { color-scheme: dark; }
+html[data-app-theme="light"] { color-scheme: light; scrollbar-color: var(--accent) var(--white); }
+html[data-app-theme="light"] body { background: var(--white); }
+
+/* buttons inside a themed surface: filled with the foreground, inverted on hover */
+.surface .btn { background: var(--fg); color: var(--bg); }
+.surface .btn:hover { background: var(--accent); color: var(--black); }
+.surface .btn--ghost { background: transparent; color: var(--fg); }
+.surface .btn--ghost:hover { background: var(--fg); color: var(--bg); }
 
 /* ---------------------------------------------------------------- pricing (Home) */
 .pricing { --fg: var(--black); --bg: var(--white); --mute: #4a4945; --rule: var(--black); --soft: #c9c8c3; --acc: var(--accent); --acc-ink: #b32800; color: var(--fg); background: var(--bg); position: relative; z-index: 4; padding: clamp(48px, 7vw, 110px) var(--gut) clamp(72px, 10vw, 150px); border-top: 1px solid var(--black); }
@@ -171,7 +188,14 @@ html { scrollbar-color: var(--accent) var(--black); }
 .app-nav { display: flex; align-items: center; gap: clamp(16px, 2.4vw, 32px); }
 .app-nav a { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; color: var(--mute, var(--grey)); }
 .app-nav a:hover, .app-nav a.active { color: var(--fg, var(--white)); }
-.app-user { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--mute, var(--grey)); }
+.app-user { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--mute, var(--grey)); max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* dark / light switch */
+.theme-switch { display: inline-flex; align-items: center; gap: 10px; padding: 6px 0; background: none; border: 0; color: var(--fg, var(--white)); cursor: pointer; }
+.theme-switch-track { position: relative; width: 40px; height: 20px; border: 1px solid currentColor; }
+.theme-switch-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: currentColor; transition: transform .25s cubic-bezier(.16, 1, .3, 1), background-color .15s; }
+.theme-switch[aria-checked="true"] .theme-switch-thumb { transform: translateX(20px); background: var(--accent); }
+.theme-switch:hover .theme-switch-track { border-color: var(--accent); }
 .app-wrap { padding: clamp(40px, 6vw, 88px) var(--gut) clamp(64px, 9vw, 140px); }
 .app-head { display: grid; gap: 14px; max-width: 640px; margin-bottom: clamp(24px, 3.4vw, 44px); }
 .app-head .mega { font-size: clamp(40px, 6.4vw, 84px); }
@@ -186,6 +210,7 @@ html { scrollbar-color: var(--accent) var(--black); }
 .dropzone-s { color: var(--mute); }
 .dropzone:hover { background: var(--fg); color: var(--bg); }
 .dropzone:hover .dropzone-s { color: var(--bg); }
+.dropzone:hover .dropzone-t b { color: var(--acc-flip); }
 .dropzone-side { display: flex; align-items: center; padding: 0 clamp(16px, 2.6vw, 36px); border-left: 2px dashed var(--rule); }
 .dropzone[data-disabled] .dropzone-in { cursor: not-allowed; opacity: .5; }
 
@@ -194,7 +219,8 @@ html { scrollbar-color: var(--accent) var(--black); }
 .app-stage img { display: block; width: 100%; height: auto; }
 @media (max-width: 900px) {
   .app-grid { grid-template-columns: 1fr; }
-  .app-nav { gap: 14px; }
+  .app-top { flex-wrap: wrap; gap: 12px; }
+  .app-nav { gap: 6px 14px; flex-wrap: wrap; justify-content: flex-end; }
 }
 
 /* ---------------------------------------------------------------- results (shared: Dashboard + History) */
