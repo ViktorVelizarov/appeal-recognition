@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import heroImg from '../assets/hero.png';
 import detectHeroImg from '../assets/detect-hero.png';
 import matchHeroImg from '../assets/match-hero.png';
-import buyHeroImg from '../assets/buy-hero.png';
+import buyHeroImg from '../assets/buy-results.png';
 
 const HomePage = () => (
   <>
@@ -103,7 +103,7 @@ const HomePage = () => (
           <p className="word-l">Buy</p>
           <div className="slab-c">
             <p className="slab-t">Shop, price and a direct link for every match, closest first.</p>
-            <img className="glyph glyph--photo glyph--fit" src={buyHeroImg} alt="A single matched jacket with its store, price, match percentage and view item link" />
+            <img className="glyph glyph--photo glyph--fit glyph--dark" src={buyHeroImg} alt="A list of jacket matches, each with its shop, item title, price and buy link" />
           </div>
         </article>
       </section>
