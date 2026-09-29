@@ -1,9 +1,123 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import heroImg from '../assets/hero.png';
-import detectHeroImg from '../assets/detect-hero.png';
-import matchHeroImg from '../assets/match-hero.png';
-import buyHeroImg from '../assets/buy-results.png';
+import scanPhotoImg from '../assets/scan-photo.png';
+
+const STEPS = [
+  {
+    name: 'Detect',
+    desc: 'A vision model finds every garment and accessory in the photo and scores its confidence.',
+  },
+  {
+    name: 'Match',
+    desc: 'Each crop is searched across online catalogues for the same piece, then close alternatives.',
+  },
+  { name: 'Buy', desc: 'Shop, price and a direct link for every match, closest first.' },
+];
+
+// Detect / Match / Buy as one photo the reader never loses, with only the copy
+// paging past it. .flow (the outer section) is a tall scroll track; .flow-stage
+// pins itself via CSS (position: sticky) while this effect just reads scroll
+// position each frame and drives the text track's transform and the progress
+// rule directly via refs, skipping React re-renders on every scroll tick.
+const Method = () => {
+  const wrapRef = useRef(null);
+  const trackRef = useRef(null);
+  const barRefs = useRef([]);
+  const labelRefs = useRef([]);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const wrap = wrapRef.current;
+      const track = trackRef.current;
+      if (!wrap || !track) return;
+
+      const rect = wrap.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 0;
+
+      // Detect holds fully in view for the first 15% of scroll before the slide starts moving,
+      // and Buy settles at 90% instead of 100%, so it also holds before the section releases into Pricing.
+      const eased = Math.min(1, Math.max(0, (progress - 0.15) / (0.9 - 0.15)));
+
+      track.style.transform = `translateX(-${(eased * 100 * (STEPS.length - 1)) / STEPS.length}%)`;
+
+      // Delay the label handoff so it doesn't flip to the next step the moment the slide starts moving.
+      const active = Math.min(STEPS.length - 1, Math.floor(Math.max(0, eased - 0.1) * STEPS.length));
+      barRefs.current.forEach((bar, i) => {
+        if (!bar) return;
+        const local = Math.min(1, Math.max(0, eased * STEPS.length - i));
+        bar.style.setProperty('--p', local);
+      });
+      labelRefs.current.forEach((label, i) => {
+        if (label) label.classList.toggle('is-active', i === active);
+      });
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  return (
+    <section className="flow" id="method" aria-labelledby="mh" ref={wrapRef}>
+      <h2 id="mh" className="sr">
+        How StyleStealer works
+      </h2>
+      <div className="flow-stage">
+        <div className="flow-left">
+          <div className="flow-progress" aria-hidden="true">
+            {STEPS.map((s, i) => (
+              <i key={s.name} ref={(el) => (barRefs.current[i] = el)} />
+            ))}
+          </div>
+          <div className="flow-labels" aria-hidden="true">
+            {STEPS.map((s, i) => (
+              <span key={s.name} ref={(el) => (labelRefs.current[i] = el)} className={i === 0 ? 'is-active' : undefined}>
+                0{i + 1} {s.name.toLowerCase()}
+              </span>
+            ))}
+          </div>
+          <div className="flow-textport">
+            <div className="flow-track" ref={trackRef}>
+              {STEPS.map((s) => (
+                <div className="flow-panel" key={s.name}>
+                  <h3 className="step-word flow-word">
+                    {s.name}
+                    <b>.</b>
+                  </h3>
+                  <p className="lede">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <figure className="flow-photo">
+          <img
+            src={scanPhotoImg}
+            width="535"
+            height="666"
+            decoding="async"
+            alt="A photographed outfit with orange bounding boxes and confidence scores marking the jacket, pants and shoes"
+          />
+        </figure>
+      </div>
+    </section>
+  );
+};
 
 const HomePage = () => (
   <>
@@ -32,12 +146,6 @@ const HomePage = () => (
           Stealer
         </span>
       </Link>
-      <a className="cell" href="#method">
-        Method
-      </a>
-      <a className="cell" href="#pricing">
-        Pricing
-      </a>
       <Link className="cell cell--auth" to="/login">
         Sign in
       </Link>
@@ -68,45 +176,21 @@ const HomePage = () => (
             Upload any outfit photo. AI vision finds every garment, matches the same or similar clothes, and tells
             you where to buy them online.
           </p>
-          <Link className="btn" to="/register">
-            Try a demo <span aria-hidden="true">&#8599;</span>
-          </Link>
+          <div className="hero-cta-row">
+            <Link className="btn" to="/register">
+              Try a demo <span aria-hidden="true">&#8599;</span>
+            </Link>
+            <a className="btn btn--ghost" href="#pricing">
+              Pricing
+            </a>
+          </div>
           <p className="mono">3 FREE SCANS &nbsp;/&nbsp; THEN CHOOSE A PLAN</p>
         </div>
       </section>
 
       <div className="dither" aria-hidden="true"></div>
 
-      <section className="method" id="method" aria-labelledby="mh">
-        <h2 id="mh" className="sr">
-          How StyleStealer works
-        </h2>
-        <article className="slab slab--k">
-          <p className="word-l">Detect</p>
-          <div className="slab-c">
-            <p className="slab-t">
-              A vision model finds every garment and accessory in the photo and scores its confidence.
-            </p>
-            <img className="glyph glyph--photo" src={detectHeroImg} alt="AI bounding boxes detecting a jacket, pants and shoes on a photographed outfit" />
-          </div>
-        </article>
-        <article className="slab slab--b">
-          <p className="word-l">Match</p>
-          <div className="slab-c">
-            <p className="slab-t">
-              Each crop is searched across online catalogues for the same piece, then close alternatives.
-            </p>
-            <img className="glyph glyph--photo glyph--fit glyph--transparent" src={matchHeroImg} alt="A cropped source garment connected to catalogue thumbnails labeled same and similar" />
-          </div>
-        </article>
-        <article className="slab slab--o">
-          <p className="word-l">Buy</p>
-          <div className="slab-c">
-            <p className="slab-t">Shop, price and a direct link for every match, closest first.</p>
-            <img className="glyph glyph--photo glyph--fit glyph--dark" src={buyHeroImg} alt="A list of jacket matches, each with its shop, item title, price and buy link" />
-          </div>
-        </article>
-      </section>
+      <Method />
 
       <section className="pricing" id="pricing" aria-labelledby="prh">
         <h2 id="prh" className="mega mega--m">
@@ -164,12 +248,6 @@ const HomePage = () => (
         <p className="mono">
           STYLESTEALER &copy; 2026 &nbsp;/&nbsp; <a className="foot-link" href="#pricing">Pricing</a>
         </p>
-        <Link className="btn" to="/register">
-          Try a demo <span aria-hidden="true">&#8599;</span>
-        </Link>
-      </div>
-      <div className="word word--foot" aria-hidden="true">
-        StyleStealer
       </div>
     </footer>
   </>

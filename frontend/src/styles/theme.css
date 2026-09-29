@@ -48,7 +48,7 @@ html { scrollbar-color: var(--accent) var(--black); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .btn--sm { padding: 10px 16px 9px; font-size: 12px; gap: 8px; }
 .btn--ghost { background: transparent; color: currentColor; border: 1px solid currentColor; }
-.btn--ghost:hover { background: currentColor; color: var(--bg, var(--black)); }
+.btn--ghost:hover { background: var(--white); color: var(--black); }
 
 /* ---------------------------------------------------------------- hero (Home) */
 .hero { position: relative; min-height: calc(100svh - 118px); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
@@ -63,13 +63,14 @@ html { scrollbar-color: var(--accent) var(--black); }
   -webkit-mask: linear-gradient(90deg, #000 0 6px, transparent 6px); mask: linear-gradient(90deg, #000 0 6px, transparent 6px); }
 .hero-copy { position: relative; z-index: 2; grid-column: 1; padding: clamp(28px, 5vw, 72px) var(--gut) clamp(90px, 11vw, 190px); display: grid; gap: 26px; justify-items: start; align-content: start; }
 .hero-copy .mono { margin-top: 6px; }
+.hero-cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
 .mega { font-weight: 900; font-stretch: 125%; text-transform: uppercase; line-height: .84; letter-spacing: -.035em; font-size: clamp(56px, 9.6vw, 176px); }
 .mega b { color: var(--accent); font-weight: 900; }
 .mega--m { font-size: clamp(56px, 11vw, 190px); }
 .lede { max-width: 38ch; font-size: 16px; line-height: 1.5; color: #d4d3cf; }
 .word { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; text-align: center; white-space: nowrap; pointer-events: none;
   font-weight: 900; font-stretch: 125%; text-transform: uppercase; letter-spacing: -.055em; line-height: .78; font-size: 9.9vw; transform: translateY(26%); color: var(--white); }
-.dither { height: 44px; background: var(--dot) 0 0 / 4px 4px; -webkit-mask: linear-gradient(90deg, #000, transparent 85%); mask: linear-gradient(90deg, #000, transparent 85%); }
+.dither { height: 44px; background: var(--dot) 0 0 / 4px 4px; }
 @media (max-width: 900px) {
   .hero { display: block; min-height: 0; }
   .hero-slot { position: relative; width: 100%; aspect-ratio: 5 / 6; }
@@ -80,27 +81,50 @@ html { scrollbar-color: var(--accent) var(--black); }
 }
 
 /* ---------------------------------------------------------------- method (Home) */
-.method { position: relative; }
-.slab { position: sticky; top: 0; overflow: hidden; min-height: 100svh; display: grid; grid-template-rows: 1fr auto; padding: clamp(24px, 4vw, 56px) var(--gut) 20px; border-top: 1px solid currentColor; }
-.slab--k { background: var(--black); color: var(--white); z-index: 1; }
-.slab--b { background: var(--white); color: var(--black); z-index: 2; }
-.slab--o { background: var(--black); color: var(--white); z-index: 3; }
-.word-l { font-weight: 900; font-stretch: 125%; text-transform: uppercase; letter-spacing: -.04em; line-height: .8; font-size: clamp(72px, 14.5vw, 250px); align-self: start; margin-top: clamp(0px, 2vw, 24px); margin-left: -.03em; }
-.slab-c { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; align-self: end; padding-bottom: 24px; }
-.slab-t { max-width: 26ch; font-size: clamp(20px, 2.2vw, 32px); line-height: 1.3; font-weight: 500; font-stretch: 100%; text-wrap: balance; }
-.glyph { width: clamp(120px, 17vw, 240px); height: auto; flex: none; }
-.glyph--photo { aspect-ratio: 3 / 4; object-fit: cover; }
-.glyph--fit { width: clamp(320px, 42vw, 720px); aspect-ratio: 16 / 10; object-fit: contain; background: var(--white); }
-.glyph--transparent { background: none; }
-.glyph--dark { aspect-ratio: 1028 / 482; background: var(--black); }
-.slab-m { color: inherit; opacity: .8; border-top: 1px solid currentColor; padding-top: 10px; display: flex; justify-content: space-between; }
-.slab--o .slab-m, .slab--b .slab-m { opacity: 1; }
-.slab--b .mono { color: #4a4945; }
-.slab--o .mono { color: var(--white); }
-@media (max-width: 900px) {
-  .slab { position: relative; min-height: 78svh; }
-  .slab-c { flex-direction: column; align-items: flex-start; }
-  .slab-m { flex-direction: column; gap: 2px; }
+/* Detect / Match / Buy as one slide at a time: .flow is a tall scroll track (JS in
+   Method reads its own scroll progress each frame); .flow-stage pins itself with
+   position:sticky for the whole track's height. Inside the pinned stage, the photo
+   sits once in the right grid column and never moves — only .flow-left (the progress
+   rule, labels and the .flow-track of step panels) is driven by scroll, translateX'd
+   sideways so exactly one panel is ever in frame. */
+.flow { position: relative; height: 300vh; border-top: 1px solid var(--line); }
+.flow-stage { position: sticky; top: 0; height: 100svh; background: var(--black); color: var(--white); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(24px, 4vw, 64px); padding: clamp(24px, 5vw, 64px) var(--gut); }
+.flow-left { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.flow-progress { display: flex; gap: 6px; }
+.flow-progress i { flex: 1; height: 2px; background: var(--dim); position: relative; overflow: hidden; font-style: normal; }
+.flow-progress i::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: scaleX(var(--p, 0)); transform-origin: left; transition: transform .1s linear; }
+.flow-labels { display: flex; gap: 6px; }
+.flow-labels span { flex: 1; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); transition: color .2s; }
+.flow-labels span.is-active { color: var(--accent); }
+.flow-textport { position: relative; overflow: hidden; height: min(56vh, 480px); }
+.flow-track { display: flex; height: 100%; width: 300%; will-change: transform; }
+.flow-panel { width: 33.3333%; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 18px; padding-right: clamp(16px, 3vw, 40px); }
+.step-word { font-weight: 900; font-stretch: 125%; text-transform: uppercase; letter-spacing: -.04em; line-height: .84; margin-left: -.03em; }
+.step-word b { color: var(--accent); }
+.flow-word { font-size: clamp(56px, 7.4vw, 132px); }
+/* Reserves space for the longest step description (3 lines) so the shorter ones
+   (e.g. Buy) don't shrink the centered title+copy block and shift the title down. */
+.flow-panel .lede { max-width: 34ch; font-size: clamp(16px, 1.25vw, 19px); min-height: 4.65em; }
+.flow-photo { justify-self: end; align-self: center; width: min(100%, 440px); margin: 0; }
+.flow-photo img { width: 100%; height: auto; display: block; }
+@media (max-width: 1000px) {
+  .flow { height: 220vh; }
+  .flow-stage { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+  .flow-photo { justify-self: stretch; max-width: 280px; margin: 0 auto; }
+  .flow-textport { height: min(48vh, 360px); order: 2; }
+  .flow-word { font-size: clamp(40px, 13vw, 76px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The horizontal paging is how a reader reaches Match/Buy at all, not just
+     decoration — so reduced motion doesn't hide steps, it drops the pin and
+     the paging trick and lays all three out as an ordinary vertical list. */
+  .flow { height: auto; }
+  .flow-stage { position: static; height: auto; display: block; padding: clamp(40px, 6vw, 88px) var(--gut); }
+  .flow-progress, .flow-labels { display: none; }
+  .flow-textport { height: auto; overflow: visible; }
+  .flow-track { display: block; width: auto; transform: none !important; }
+  .flow-panel { width: auto; height: auto; padding: clamp(20px, 3vw, 32px) 0; border-top: 1px solid var(--line); }
+  .flow-photo { justify-self: stretch; max-width: 380px; margin: clamp(24px, 4vw, 40px) auto 0; }
 }
 
 /* ---------------------------------------------------------------- workspace tokens (ink / bone)
@@ -159,10 +183,9 @@ html[data-app-theme="light"] body { background: var(--white); }
 }
 
 /* ---------------------------------------------------------------- footer (Home) */
-.foot { position: relative; margin-top: clamp(64px, 10vw, 160px); border-top: 1px solid var(--line); overflow: hidden; padding-top: 20px; background: var(--black); }
+.foot { position: relative; margin-top: clamp(32px, 5vw, 80px); border-top: 1px solid var(--line); overflow: hidden; padding-top: 20px; background: var(--black); }
 .foot-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; padding: 0 var(--gut) clamp(40px, 6vw, 90px); }
 .foot-link { color: var(--white); }
-.word--foot { position: relative; left: auto; right: auto; bottom: auto; transform: translateY(26%); height: 7.6vw; }
 
 /* ---------------------------------------------------------------- auth (Login / Register) */
 .auth-top { display: flex; justify-content: space-between; align-items: center; padding: 18px var(--gut); border-bottom: 1px solid var(--line); }

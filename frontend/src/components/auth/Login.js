@@ -35,9 +35,6 @@ const Login = () => {
             Stealer
           </span>
         </Link>
-        <Link className="auth-top-link" to="/register">
-          New here? Create an account
-        </Link>
       </header>
 
       <main className="auth-main">
