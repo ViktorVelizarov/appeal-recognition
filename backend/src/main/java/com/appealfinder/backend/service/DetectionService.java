@@ -30,6 +30,7 @@ public class DetectionService {
 
     private static final String JSON_BEGIN_MARKER = "JSON_RESULT_BEGIN";
     private static final String JSON_END_MARKER = "JSON_RESULT_END";
+    private static final double MIN_DETECTION_CONFIDENCE = 0.50;
 
     private final AppProperties props;
     private final S3Service s3Service;
@@ -101,6 +102,11 @@ public class DetectionService {
             JsonNode detections = result.get("detections");
             if (detections != null && detections.isArray()) {
                 for (JsonNode detection : detections) {
+                    double confidence = detection.get("confidence").asDouble();
+                    if (confidence < MIN_DETECTION_CONFIDENCE) {
+                        continue;
+                    }
+
                     String croppedFileName = detection.get("cropped_image").asString();
                     Path croppedPath = runDirectory.resolve("cropped").resolve(croppedFileName);
                     if (!Files.exists(croppedPath)) {
@@ -121,7 +127,7 @@ public class DetectionService {
 
                     croppedImages.add(new DetectionRun.CroppedImage(
                             detection.get("class").asString(),
-                            detection.get("confidence").asDouble(),
+                            confidence,
                             bbox,
                             croppedUrl
                     ));
