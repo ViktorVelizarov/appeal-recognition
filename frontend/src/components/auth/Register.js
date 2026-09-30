@@ -43,16 +43,13 @@ const Register = () => {
             Stealer
           </span>
         </Link>
-        <Link className="auth-top-link" to="/login">
-          Already have an account? Sign in
-        </Link>
       </header>
 
       <main className="auth-main">
         <form className="auth-card" onSubmit={handleSubmit}>
           <div>
             <h1 className="mega">
-              Create your
+              Create&nbsp;an
               <br />
               account
               <b>.</b>
@@ -102,7 +99,6 @@ const Register = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <span className="field-hint">At least {MIN_PASSWORD_LENGTH} characters</span>
             </div>
           </div>
 

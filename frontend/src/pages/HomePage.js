@@ -119,6 +119,20 @@ const Method = () => {
   );
 };
 
+// The hero's Pricing link jumps over the .flow scrollytelling section, whose sticky
+// pin makes the global smooth-scroll race through the slide's transform mid-animation.
+// Scrolling instantly instead skips straight past it with nothing to animate.
+const jumpToPricing = (e) => {
+  e.preventDefault();
+  const target = document.getElementById('pricing');
+  if (!target) return;
+  const root = document.documentElement;
+  const prevBehavior = root.style.scrollBehavior;
+  root.style.scrollBehavior = 'auto';
+  target.scrollIntoView({ block: 'start' });
+  root.style.scrollBehavior = prevBehavior;
+};
+
 const HomePage = () => (
   <>
     <div className="ticker" aria-hidden="true">
@@ -180,7 +194,7 @@ const HomePage = () => (
             <Link className="btn" to="/register">
               Try a demo <span aria-hidden="true">&#8599;</span>
             </Link>
-            <a className="btn btn--ghost" href="#pricing">
+            <a className="btn btn--ghost" href="#pricing" onClick={jumpToPricing}>
               Pricing
             </a>
           </div>
@@ -197,7 +211,6 @@ const HomePage = () => (
           Pricing
           <b>.</b>
         </h2>
-        <p className="pricing-sub">Three scans free when you sign up. After that, one plan &mdash; pick how you pay.</p>
         <div className="plan">
           <input type="radio" name="billing" id="bill-m" className="toggle-input" defaultChecked />
           <input type="radio" name="billing" id="bill-y" className="toggle-input" />

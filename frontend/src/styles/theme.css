@@ -153,7 +153,6 @@ html[data-app-theme="light"] body { background: var(--white); }
 .pricing .mono { color: var(--mute); }
 .pricing .mega { margin-bottom: clamp(20px, 3vw, 44px); }
 .pricing .mega b { color: #c92f00; }
-.pricing-sub { max-width: 52ch; font-size: 16px; line-height: 1.5; opacity: .85; margin-bottom: clamp(28px, 4vw, 52px); }
 .plan { position: relative; max-width: 620px; }
 .toggle-input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
 .toggle { display: inline-flex; border: 2px solid var(--line); margin-bottom: 28px; }
@@ -183,14 +182,12 @@ html[data-app-theme="light"] body { background: var(--white); }
 }
 
 /* ---------------------------------------------------------------- footer (Home) */
-.foot { position: relative; margin-top: clamp(32px, 5vw, 80px); border-top: 1px solid var(--line); overflow: hidden; padding-top: 20px; background: var(--black); }
+.foot { position: relative; border-top: 1px solid var(--line); overflow: hidden; padding-top: 20px; background: var(--black); }
 .foot-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; padding: 0 var(--gut) clamp(40px, 6vw, 90px); }
 .foot-link { color: var(--white); }
 
 /* ---------------------------------------------------------------- auth (Login / Register) */
 .auth-top { display: flex; justify-content: space-between; align-items: center; padding: 18px var(--gut); border-bottom: 1px solid var(--line); }
-.auth-top-link { font-family: var(--mono); font-size: 12px; letter-spacing: .02em; text-decoration: none; color: var(--grey); background: none; border: 0; cursor: pointer; }
-.auth-top-link:hover { color: var(--white); }
 .auth-main { min-height: calc(100svh - 78px); display: grid; place-items: center; padding: clamp(40px, 8vw, 100px) var(--gut); }
 .auth-card { width: 100%; max-width: 460px; display: grid; gap: clamp(24px, 3vw, 36px); }
 .auth-card .mega { font-size: clamp(40px, 6vw, 72px); }
@@ -201,7 +198,6 @@ html[data-app-theme="light"] body { background: var(--white); }
 .field input { background: transparent; border: 2px solid var(--line); color: var(--white); font: inherit; font-size: 16px; padding: 14px 16px; border-radius: 0; }
 .field input::placeholder { color: var(--grey); opacity: .7; }
 .field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
-.field-hint { color: var(--grey); font-size: 12px; }
 .auth-cta { width: 100%; justify-content: center; }
 .auth-alt { color: var(--grey); font-size: 14px; }
 .auth-alt a, .auth-alt button { color: var(--white); text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; font: inherit; cursor: pointer; padding: 0; }
