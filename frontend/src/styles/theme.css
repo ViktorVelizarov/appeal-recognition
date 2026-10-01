@@ -33,6 +33,9 @@ html { scrollbar-color: var(--accent) var(--black); }
 .ticker-track { display: inline-flex; gap: 28px; padding: 9px 0; animation: tick 42s linear infinite; font-weight: 900; font-stretch: 125%; text-transform: uppercase; font-size: 14px; letter-spacing: .02em; }
 .ticker-track i { font-style: normal; }
 @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-25%); } }
+@media (max-width: 1000px) {
+  .ticker { display: none; }
+}
 
 /* ---------------------------------------------------------------- header / buttons */
 .bar { display: flex; border-bottom: 1px solid var(--line); }
@@ -109,9 +112,12 @@ html { scrollbar-color: var(--accent) var(--black); }
 .flow-photo img { width: 100%; height: auto; display: block; }
 @media (max-width: 1000px) {
   .flow { height: 220vh; }
-  .flow-stage { grid-template-columns: 1fr; grid-template-rows: auto auto; }
-  .flow-photo { justify-self: stretch; max-width: 280px; margin: 0 auto; }
-  .flow-textport { height: min(48vh, 360px); order: 2; }
+  /* .flow-stage keeps a fixed 100svh (set above) so the sticky-pin math in Method's
+     scroll handler stays correct; overflow:hidden is a backstop in case the stacked
+     photo+text still runs taller than that on the shortest phones. */
+  .flow-stage { grid-template-columns: 1fr; grid-template-rows: auto auto; padding: 20px var(--gut); gap: 16px; overflow: hidden; }
+  .flow-photo { justify-self: stretch; max-width: 190px; margin: 0 auto; }
+  .flow-textport { height: min(32vh, 230px); }
   .flow-word { font-size: clamp(40px, 13vw, 76px); }
 }
 @media (prefers-reduced-motion: reduce) {

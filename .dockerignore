@@ -1,0 +1,30 @@
+# Not part of the deployed backend image — the frontend deploys separately (Vercel).
+frontend
+
+# Training/eval assets and local venv that live next to the inference script,
+# not needed to run it. Only python/object_detection_YOLO.py, data.yaml and
+# trained_YOLO8.pt are copied into the image (see Dockerfile).
+python/train
+python/test
+python/colorful_fashion_dataset_for_object_detection
+python/venv
+python/runs
+python/evaluate_model.py
+train
+evaluation_results_20250509_014028
+evaluation_results_20250509_015118
+photos
+v4b
+src
+yolov8m.pt
+
+# Local build/output dirs
+backend/target
+backend/runs
+runs
+.git
+.claude
+.impeccable
+credentials
+.env
+*.log
