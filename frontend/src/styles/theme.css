@@ -77,7 +77,9 @@ html { scrollbar-color: var(--accent) var(--black); }
 @media (max-width: 900px) {
   .hero { display: block; min-height: 0; }
   .hero-slot { position: relative; width: 100%; aspect-ratio: 5 / 6; }
-  .hero-copy { padding-bottom: 110px; }
+  .hero-copy { padding-left: 24px; padding-right: 24px; padding-bottom: 110px; }
+  .hero-cta-row { flex-wrap: nowrap; gap: 10px; }
+  .hero-cta-row .btn { flex: 1 1 0; justify-content: center; padding: 14px 16px 13px; font-size: 13px; gap: 8px; }
   .word { font-size: 9.9vw; }
   .reg.br, .fig { display: none; }
   .cell:not(.cell--cta):not(.cell--auth) { display: none; }
@@ -115,9 +117,10 @@ html { scrollbar-color: var(--accent) var(--black); }
   /* .flow-stage keeps a fixed 100svh (set above) so the sticky-pin math in Method's
      scroll handler stays correct; overflow:hidden is a backstop in case the stacked
      photo+text still runs taller than that on the shortest phones. */
-  .flow-stage { grid-template-columns: 1fr; grid-template-rows: auto auto; padding: 20px var(--gut); gap: 16px; overflow: hidden; }
-  .flow-photo { justify-self: stretch; max-width: 190px; margin: 0 auto; }
-  .flow-textport { height: min(32vh, 230px); }
+  .flow-stage { grid-template-columns: 1fr; grid-template-rows: auto auto; padding: 14px var(--gut); gap: 12px; overflow: hidden; }
+  .flow-left { gap: 10px; }
+  .flow-photo { justify-self: stretch; max-width: 280px; margin: 0 auto; }
+  .flow-textport { height: min(26vh, 190px); }
   .flow-word { font-size: clamp(40px, 13vw, 76px); }
 }
 @media (prefers-reduced-motion: reduce) {
