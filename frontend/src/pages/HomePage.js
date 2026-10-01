@@ -192,7 +192,7 @@ const HomePage = () => (
           </p>
           <div className="hero-cta-row">
             <Link className="btn" to="/register">
-              Try a demo <span aria-hidden="true">&#8599;</span>
+              Try a demo <span className="btn-arrow" aria-hidden="true">&#8599;</span>
             </Link>
             <a className="btn btn--ghost" href="#pricing" onClick={jumpToPricing}>
               Pricing
@@ -248,7 +248,7 @@ const HomePage = () => (
               </li>
             </ul>
             <Link className="btn plan-cta" to="/register">
-              Try a demo <span aria-hidden="true">&#8599;</span>
+              Try a demo <span className="btn-arrow" aria-hidden="true">&#8599;</span>
             </Link>
             <p className="mono plan-fine">3 FREE SCANS INCLUDED &nbsp;/&nbsp; CANCEL ANYTIME</p>
           </div>

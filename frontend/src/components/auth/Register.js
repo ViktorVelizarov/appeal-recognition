@@ -103,7 +103,7 @@ const Register = () => {
           </div>
 
           <button type="submit" className="btn auth-cta" disabled={submitting}>
-            {submitting ? 'Creating account…' : 'Create account'} <span aria-hidden="true">&#8599;</span>
+            {submitting ? 'Creating account…' : 'Create account'} <span className="btn-arrow" aria-hidden="true">&#8599;</span>
           </button>
 
           <p className="auth-alt">

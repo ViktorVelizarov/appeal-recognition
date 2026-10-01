@@ -81,7 +81,7 @@ const Login = () => {
           </div>
 
           <button type="submit" className="btn auth-cta" disabled={submitting}>
-            {submitting ? 'Signing in…' : 'Sign in'} <span aria-hidden="true">&#8599;</span>
+            {submitting ? 'Signing in…' : 'Sign in'} <span className="btn-arrow" aria-hidden="true">&#8599;</span>
           </button>
 
           <p className="auth-alt">

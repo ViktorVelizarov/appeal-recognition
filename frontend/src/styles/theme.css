@@ -52,6 +52,11 @@ html { scrollbar-color: var(--accent) var(--black); }
 .btn--sm { padding: 10px 16px 9px; font-size: 12px; gap: 8px; }
 .btn--ghost { background: transparent; color: currentColor; border: 1px solid currentColor; }
 .btn--ghost:hover { background: var(--white); color: var(--black); }
+@media (max-width: 900px) {
+  /* iOS renders U+2197 with its colorful emoji presentation instead of plain text
+     here, which reads as a stray icon rather than the intended arrow glyph. */
+  .btn-arrow { display: none; }
+}
 
 /* ---------------------------------------------------------------- hero (Home) */
 .hero { position: relative; min-height: calc(100svh - 118px); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }

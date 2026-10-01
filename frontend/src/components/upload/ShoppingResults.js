@@ -23,7 +23,7 @@ const ShoppingResults = ({ items }) => {
           <span className="m-price">{formatPrice(item) || '—'}</span>
           {item.itemUrl ? (
             <a className="m-buy" href={item.itemUrl} target="_blank" rel="noopener noreferrer">
-              Buy &#8599;
+              Buy <span className="btn-arrow" aria-hidden="true">&#8599;</span>
             </a>
           ) : (
             <span />
