@@ -2,6 +2,8 @@
 
 A web application that uses YOLO object detection to identify clothing items in photos, then finds similar items you can shop for. Images are stored in AWS S3 and detection history is kept in MongoDB.
 
+<img width="1912" height="905" alt="image" src="https://github.com/user-attachments/assets/cae2414e-4903-4b35-be76-da700f12713e" />
+
 ## Features
 
 - Image upload and object detection using a custom-trained YOLOv8 model (10 classes: sunglass, hat, jacket, shirt, pants, shorts, skirt, dress, bag, shoe)
